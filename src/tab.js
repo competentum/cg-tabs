@@ -4,7 +4,7 @@ import helpFuncs from './help-funcs';
 import Panel from './panel';
 
 const SELECT_CLASS = 'select';
-const TAB_NAVIGATOR_CLASS = 'cg-tab-navigation';
+const TAB_NAVIGATOR_CLASS = 'cg-tabs';
 const TAB_CLASS = `${TAB_NAVIGATOR_CLASS}-tab`;
 
 class Tab extends EventEmitter {
@@ -15,21 +15,23 @@ class Tab extends EventEmitter {
     this.panel = new Panel(content);
   }
 
-  get isSelected(){
-    return this._element.classList.contains(SELECT_CLASS);
-  }
-
   select(){
-    if(this.isSelected) return;
+    if(this.selected) return;
+
+    // call listeners for select event
+    this.emit("select");
 
     this._element.classList.add(SELECT_CLASS);
     this.panel.show();
-    this.emit("select");
+
+    this.selected = true;
   }
 
   close(){
     this._element.classList.remove(SELECT_CLASS);
     this.panel.hide();
+
+    this.selected = false;
   }
 
   _render(title){

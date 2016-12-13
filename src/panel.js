@@ -1,7 +1,7 @@
 import utils from 'cg-component-utils';
 import helpFuncs from './help-funcs';
 
-const TAB_NAVIGATOR_CLASS = 'cg-tab-navigation';
+const TAB_NAVIGATOR_CLASS = 'cg-tabs';
 const PANEL_CLASS = `${TAB_NAVIGATOR_CLASS}-panel`;
 
 class Panel {

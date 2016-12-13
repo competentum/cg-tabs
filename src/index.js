@@ -8,13 +8,11 @@ import Panel from './panel';
 import utils from 'cg-component-utils';
 import helpFuncs from './help-funcs';
 
-const TAB_NAVIGATOR_CLASS = 'cg-tab-navigation';
+const TAB_NAVIGATOR_CLASS = 'cg-tabs';
 const TAB_LIST_CLASS = `${TAB_NAVIGATOR_CLASS}-tab-list`;
 const PANEL_LIST_CLASS = `${TAB_NAVIGATOR_CLASS}-panel-list`;
-const TAB_CLASS = `${TAB_NAVIGATOR_CLASS}-tab`;
-const PANEL_CLASS = `${TAB_NAVIGATOR_CLASS}-panel`;
 
-class CgTabNavigation extends EventEmitter {
+class CgTabs extends EventEmitter {
 
   /**
    * Default tab navigation's settings
@@ -64,7 +62,11 @@ class CgTabNavigation extends EventEmitter {
     return this.settings.container;
   }
 
-  closeTab(tab){
+  /**
+   * Close current open tab and save selected
+   * @param {Tab} tab
+   */
+  updateCurrentTab(tab){
     this.tab.close();
     this.tab = tab;
   }
@@ -125,9 +127,10 @@ class CgTabNavigation extends EventEmitter {
       content = options.content;
 
       tab = this.addTab(title, content);
-      tab.on("select", this.closeTab.bind(this, tab));
 
-      i && tab.close();
+      // attach events and close tab
+      tab.on("select", this.updateCurrentTab.bind(this, tab));
+      tab.close();
     }
 
     this.container.appendChild(this._rootElement);
@@ -139,8 +142,8 @@ class CgTabNavigation extends EventEmitter {
    */
   _init(){
     this.tab = this.tabs[0];
-    //this.tab.select();
+    this.tab.select();
   }
 }
 
-module.exports = CgTabNavigation;
+module.exports = CgTabs;

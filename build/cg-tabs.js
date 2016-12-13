@@ -1,5 +1,5 @@
 /*!
- * cg-tab-navigation v0.0.1 - Template Project for Competentum Group Components
+ * cg-tabs v0.0.1 - Template Project for Competentum Group Components
  * 
  * (c) 2015-2016 Competentum Group | http://competentum.com
  * Released under the MIT license
@@ -11,9 +11,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["CgTabNavigation"] = factory();
+		exports["CgTabs"] = factory();
 	else
-		root["CgTabNavigation"] = factory();
+		root["CgTabs"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -78,9 +78,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _events2 = _interopRequireDefault(_events);
 
-	var _cgComponentUtils = __webpack_require__(7);
+	var _tab = __webpack_require__(7);
+
+	var _tab2 = _interopRequireDefault(_tab);
+
+	var _panel = __webpack_require__(11);
+
+	var _panel2 = _interopRequireDefault(_panel);
+
+	var _cgComponentUtils = __webpack_require__(8);
 
 	var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+	var _helpFuncs = __webpack_require__(10);
+
+	var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -90,16 +102,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var TAB_NAVIGATOR_CLASS = 'cg-tab-navigator';
+	var TAB_NAVIGATOR_CLASS = 'cg-tabs';
 	var TAB_LIST_CLASS = TAB_NAVIGATOR_CLASS + '-tab-list';
 	var PANEL_LIST_CLASS = TAB_NAVIGATOR_CLASS + '-panel-list';
-	var TAB_CLASS = TAB_NAVIGATOR_CLASS + '-tab';
-	var PANEL_CLASS = TAB_NAVIGATOR_CLASS + '-panel';
 
-	var CgTabNavigation = function (_EventEmitter) {
-	  _inherits(CgTabNavigation, _EventEmitter);
+	var CgTabs = function (_EventEmitter) {
+	  _inherits(CgTabs, _EventEmitter);
 
-	  _createClass(CgTabNavigation, null, [{
+	  _createClass(CgTabs, null, [{
 	    key: 'DEFAULT_SETTINGS',
 
 
@@ -129,34 +139,80 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     *
-	     * @param {TemplateComponentSettings} settings
+	     * @param {Array} options
+	     * @param {Object} [settings]
 	     * @constructor
 	     */
 
 	  }]);
 
-	  function CgTabNavigation(settings) {
-	    _classCallCheck(this, CgTabNavigation);
+	  function CgTabs(options, settings) {
+	    _classCallCheck(this, CgTabs);
 
-	    var _this = _possibleConstructorReturn(this, (CgTabNavigation.__proto__ || Object.getPrototypeOf(CgTabNavigation)).call(this));
+	    var _this = _possibleConstructorReturn(this, (CgTabs.__proto__ || Object.getPrototypeOf(CgTabs)).call(this));
 
-	    _this.settings = settings;
+	    var defSettings = _this.constructor.DEFAULT_SETTINGS;
 
-	    _this._applySettings(settings);
+	    _this.settings = _helpFuncs2.default.extend({}, defSettings, settings);
+	    _this.options = options;
+
+	    _this.tabs = [];
+	    _this.removedTabs = [];
+
 	    _this._render();
+	    _this._init();
 	    return _this;
 	  }
 
-	  /**
-	   *
-	   * @param {Object} settings
-	   * @private
-	   */
+	  _createClass(CgTabs, [{
+	    key: 'updateCurrentTab',
 
 
-	  _createClass(CgTabNavigation, [{
-	    key: '_applySettings',
-	    value: function _applySettings(settings) {}
+	    /**
+	     * Close current open tab and save selected
+	     * @param {Tab} tab
+	     */
+	    value: function updateCurrentTab(tab) {
+	      this.tab.close();
+	      this.tab = tab;
+	    }
+
+	    /**
+	     * add Tab element to current state
+	     * @param title
+	     * @param content
+	     */
+
+	  }, {
+	    key: 'addTab',
+	    value: function addTab(title, content) {
+	      var tab = new _tab2.default(title, content);
+
+	      // write and append new tab on the page
+	      this.tabs.push(tab);
+	      this._tabListElement.appendChild(tab._element);
+	      this._panelListElement.appendChild(tab.panel._element);
+
+	      return tab;
+	    }
+
+	    /**
+	     * Remove tab
+	     * @param {Object} tab
+	     */
+
+	  }, {
+	    key: 'removeTab',
+	    value: function removeTab(tab) {
+	      var position = this.tabs.indexOf(tab);
+
+	      if (position > -1) {
+	        this.tabs.splice(1, position);
+
+	        this._tabListElement.removeChild(tab._element);
+	        this._panelListElement.removeChild(tab.panel._element);
+	      }
+	    }
 
 	    /**
 	     * @private
@@ -166,26 +222,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_render',
 	    value: function _render() {
 	      // draw shell for
-	      var elementHTML = '\n      <div class="' + TAB_NAVIGATOR_CLASS + '">\n        <div class="' + TAB_LIST_CLASS + '"></div>\n        <div class="' + PANEL_LIST_CLASS + '"></div>\n      </div>\n    ';
+	      var elementHTML = '\n      <div class="' + TAB_NAVIGATOR_CLASS + '">\n        <ul class="' + TAB_LIST_CLASS + '"></ul>\n        <div class="' + PANEL_LIST_CLASS + '"></div>\n      </div>\n    ';
 
-	      /**
-	       * Storage for HTML elements
-	       * @type {Object}
-	       * @property {Element} main      - main tab navigation container
-	       * @property {Element} tabList   - contains all of the tabs elements
-	       * @property {Element} panelList - contains all of the panels elements
-	       */
-	      this.view = {};
-	      this.view.main = _cgComponentUtils2.default.createHTML(elementHTML);
-	      this.view.tabList = this.view.main.querySelector('.' + TAB_LIST_CLASS);
-	      this.view.panelList = this.view.main.querySelector('.' + PANEL_LIST_CLASS);
+	      this._rootElement = _cgComponentUtils2.default.createHTML(elementHTML);
+	      this._tabListElement = this._rootElement.querySelector('.' + TAB_LIST_CLASS);
+	      this._panelListElement = this._rootElement.querySelector('.' + PANEL_LIST_CLASS);
+
+	      var tab = void 0,
+	          options = void 0,
+	          title = void 0,
+	          content = void 0,
+	          i = 0;
+
+	      for (; i < this.options.length; i++) {
+	        options = this.options[i];
+
+	        title = options.title;
+	        content = options.content;
+
+	        tab = this.addTab(title, content);
+
+	        // attach events and close tab
+	        tab.on("select", this.updateCurrentTab.bind(this, tab));
+	        tab.close();
+	      }
+
+	      this.container.appendChild(this._rootElement);
+	    }
+
+	    /**
+	     * Initialize state of app
+	     * @private
+	     */
+
+	  }, {
+	    key: '_init',
+	    value: function _init() {
+	      this.tab = this.tabs[0];
+	      this.tab.select();
+	    }
+	  }, {
+	    key: 'container',
+	    get: function get() {
+	      return this.settings.container;
 	    }
 	  }]);
 
-	  return CgTabNavigation;
+	  return CgTabs;
 	}(_events2.default);
 
-	module.exports = CgTabNavigation;
+	module.exports = CgTabs;
 
 /***/ },
 /* 2 */
@@ -222,7 +308,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "", ""]);
+	exports.push([module.id, "ul.cg-tabs-tab-list {\n  width: 100%;\n  margin: 0;\n  padding: 0;\n  background: #f3f3f3;\n  text-align: center;\n}\nli.cg-tabs-tab {\n  display: inline-block;\n  padding: 10px 20px;\n  background: #f3f3f3;\n}\n.cg-tabs-panel-list p,\n.cg-tabs-panel-list h1 {\n  margin: 0;\n}\n.cg-tabs-panel-list {\n  padding: 10px;\n  background: #f3f3f3;\n}\n", ""]);
 
 	// exports
 
@@ -849,7 +935,112 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	__webpack_require__(8);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _events = __webpack_require__(6);
+
+	var _events2 = _interopRequireDefault(_events);
+
+	var _cgComponentUtils = __webpack_require__(8);
+
+	var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+	var _helpFuncs = __webpack_require__(10);
+
+	var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
+
+	var _panel = __webpack_require__(11);
+
+	var _panel2 = _interopRequireDefault(_panel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SELECT_CLASS = 'select';
+	var TAB_NAVIGATOR_CLASS = 'cg-tabs';
+	var TAB_CLASS = TAB_NAVIGATOR_CLASS + '-tab';
+
+	var Tab = function (_EventEmitter) {
+	  _inherits(Tab, _EventEmitter);
+
+	  function Tab(title, content) {
+	    _classCallCheck(this, Tab);
+
+	    var _this = _possibleConstructorReturn(this, (Tab.__proto__ || Object.getPrototypeOf(Tab)).call(this));
+
+	    _this._render(title);
+	    _this.panel = new _panel2.default(content);
+	    return _this;
+	  }
+
+	  _createClass(Tab, [{
+	    key: 'select',
+	    value: function select() {
+	      if (this.isSelected) return;
+
+	      // call listeners for select event
+	      this.emit("select");
+
+	      this._element.classList.add(SELECT_CLASS);
+	      this.panel.show();
+	    }
+	  }, {
+	    key: 'close',
+	    value: function close() {
+	      this._element.classList.remove(SELECT_CLASS);
+	      this.panel.hide();
+	    }
+	  }, {
+	    key: '_render',
+	    value: function _render(title) {
+	      // get type of title
+	      var type = _helpFuncs2.default.getType(title);
+
+	      // create wrapper for tab
+	      this._element = _cgComponentUtils2.default.createHTML('<li class="' + TAB_CLASS + '"></li>');
+	      this._element.addEventListener("click", this.select.bind(this));
+
+	      if (type === "html") {
+	        this._element.appendChild(title);
+
+	        return;
+	      }
+
+	      if (type === "string") {
+	        var child = void 0;
+
+	        try {
+	          child = document.querySelector(title);
+	          this._element.appendChild(child);
+	        } catch (e) {
+	          this._element.innerHTML = title;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'isSelected',
+	    get: function get() {
+	      return this._element.classList.contains(SELECT_CLASS);
+	    }
+	  }]);
+
+	  return Tab;
+	}(_events2.default);
+
+	module.exports = Tab;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(9);
 
 	module.exports = {
 
@@ -931,7 +1122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -952,6 +1143,160 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return i > -1;
 	    };
 	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+
+	  /**
+	   * This function here just to demonstrate test case
+	   * @param {number} a
+	   * @param {number} b
+	   * @returns {number}
+	   */
+	  sum: function sum(a, b) {
+	    return a + b;
+	  },
+	  /**
+	   * Output type of input object ("extends" native typeof)
+	   * @param {Object|Function|Array|Number|RegExp|String|Boolean|Null|Undefined} object
+	   * @returns {string}
+	   */
+	  getType: function getType(object) {
+	    var str = void 0;
+
+	    str = Object.prototype.toString.call(object); // transform object to string
+	    str = str.slice(8, str.length - 1); // cut needed part. for example "[object (Object)]"
+	    str = str.toLowerCase();
+
+	    // if it's html element - return "html" type
+	    str = str.indexOf("html") !== -1 ? "html" : str;
+
+	    return str;
+	  },
+	  /**
+	   * Extended objects
+	   * @param {Object} target
+	   * @params {Object} sources
+	   * @return {Object} return extended object
+	   * @private
+	   */
+	  extend: function extend(target) {
+	    target = this.getType(target) === "object" ? target : {};
+
+	    var sources = Array.prototype.slice.call(arguments, 1);
+	    var length = sources.length;
+
+	    if (length) {
+	      var key = void 0,
+	          source = void 0,
+	          i = 0;
+
+	      for (; i < length; i++) {
+	        source = sources[i];
+	        source = this.getType(source) === 'object' ? source : {};
+
+	        for (key in source) {
+	          target[key] = source[key];
+	        }
+	      }
+
+	      return target;
+	    }
+	  }
+	};
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _cgComponentUtils = __webpack_require__(8);
+
+	var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+	var _helpFuncs = __webpack_require__(10);
+
+	var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var TAB_NAVIGATOR_CLASS = 'cg-tabs';
+	var PANEL_CLASS = TAB_NAVIGATOR_CLASS + '-panel';
+
+	var Panel = function () {
+	  function Panel(content) {
+	    _classCallCheck(this, Panel);
+
+	    this._render(content);
+	  }
+
+	  _createClass(Panel, [{
+	    key: 'hide',
+	    value: function hide() {
+	      this._element.style.display = "none";
+	    }
+	  }, {
+	    key: 'show',
+	    value: function show() {
+	      this._element.style.display = "";
+	    }
+	  }, {
+	    key: '_render',
+	    value: function _render(content) {
+	      var _this = this;
+
+	      // get type of title
+	      var type = _helpFuncs2.default.getType(content);
+
+	      // create wrapper for tab
+	      this._element = _cgComponentUtils2.default.createHTML('<div class="' + PANEL_CLASS + '"></div>');
+
+	      if (type === "html") {
+	        this._element.appendChild(content);
+
+	        return;
+	      }
+
+	      if (type === "string") {
+	        var child = void 0;
+
+	        try {
+	          // try to get element
+	          child = document.querySelector(content);
+	          this._element.appendChild(child);
+	        } catch (e) {
+	          // if string has a .html part - load html
+	          if (content.search(/\.html/g) > -1) {
+	            fetch(content).then(function (response) {
+	              return response.text();
+	            }).then(function (text) {
+	              _this._element.innerHTML = text;
+	            });
+	          } else {
+	            this._element.innerHTML = content;
+	          }
+	        }
+	      }
+	    }
+	  }]);
+
+	  return Panel;
+	}();
+
+	module.exports = Panel;
 
 /***/ }
 /******/ ])

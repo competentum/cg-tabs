@@ -1,21 +1,21 @@
 {
-  "name": "cg-tab-navigation",
+  "name": "cg-tabs",
   "version": "0.0.1",
   "description": "Template Project for Competentum Group Components",
-  "main": "build/cg-template-component.min.js",
+  "main": "build/cg-tabs.min.js",
   "scripts": {
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/competentum/cg-template-component.git"
+    "url": "git+https://github.com/competentum/cg-tabs.git"
   },
   "author": "Alexey Pilyugin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/competentum/cg-template-component/issues"
+    "url": "https://github.com/competentum/cg-tabs/issues"
   },
-  "homepage": "https://github.com/competentum/cg-template-component#readme",
+  "homepage": "https://github.com/competentum/cg-tabs#readme",
   "devDependencies": {
     "babel-core": "^6.18.0",
     "babel-jest": "^17.0.2",
