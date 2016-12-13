@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="cg-tab-navigation.js"></script>
+</head>
+<body>
+
+    <div id="tab-navigation">
+        <div class="panel">
+            <p>You can use Riemann sums to estimate the net area, where you approximate the enclosed region with rectangles using left or right endpoints or midpoints to determine the height,˙ or you can select Simpson’s Rule or the Trapezoidal Rule. In each case, the module will compute the estimated value and display a graph of the area computed. You can improve the approximation by increasing the number of subintervals, and you can see the error in the estimated value both graphically and numerically.</p>
+        </div>
+    </div>
+
+<script>
+    let settings = {
+        container: document.querySelector("#tab-navigation")
+    };
+    let tabs = [
+        {
+            "title": "<i>Example</i>1",
+            "content": document.querySelector(".panel")
+        },
+        {
+            "title": "Example 2",
+            "content": "Hello!"
+        },
+        {
+            "title": "Example 2",
+            "content": "Some Text 3"
+        }
+    ];
+
+    window.cgTabNavigator = new CgTabNavigation(tabs, settings);
+</script>
+
+</body>
+</html>
