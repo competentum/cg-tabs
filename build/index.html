@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title></title>
     <script type="text/javascript" src="cg-tabs.js"></script>
+    <style>
+        #tab-navigation {
+            width: 600px;
+            margin: 20px auto;
+        }
+        #tab-navigation2 {
+            width: 700px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,39 +24,113 @@
         <div class="panel">
             <p>Colors are split into their red, green, blue and alpha dimensions. The operation is applied to each color dimension separately. E.g., if the user added two colors, then the green dimension of the result is equal to sum of green dimensions of input colors. If the user multiplied a color by a number, each color dimension will get multiplied.
 
-                Note: arithmetic operation on alpha is not defined, because math operation on colors do not have standard agreed upon meaning. Do not rely on current implemention as it may change in later versions.</p>
+                Note: arithmetic operation on <b>alpha</b> is not defined, because math operation on colors do not have standard agreed upon meaning. Do not rely on current implemention as it may change in later versions.</p>
         </div>
         <div class="panel">
-            <img style="width: 100%;" src="http://weknowyourdreams.com/images/sea/sea-06.jpg" alt="">
             <p>
                 Less provides a variety of functions which transform colors, manipulate strings and do maths. They are documented fully in the function reference.
 
                 Using them is pretty straightforward. The following example uses percentage to convert 0.5 to 50%, increases the saturation of a base color by 5% and then sets the background color to one that is lightened by 25% and spun by 8 degrees:
             </p>
         </div>
+        <div class="panel">
+            <p>
+                Here we are fetching an image across the network and inserting it into an <img> element. The simplest use of fetch() takes one argument — the path to the resource you want to fetch — and returns a promise containing the response (a Response object).
+            </p>
+        </div>
+        <div class="panel">
+            <p>
+                This kind of functionality was previously achieved using XMLHttpRequest. Fetch provides a better alternative that can be easily used by other technologies such as Service Workers. Fetch also provides a single logical place to define other HTTP-related concepts such as CORS and extensions to HTTP.
+            </p>
+        </div>
+    </div>
+
+    <div id="tab-navigation2">
+        <div class="panel">
+            <p>You can use Riemann sums to estimate the net area, where you approximate the enclosed region with rectangles using left or right endpoints or midpoints to determine the height,˙ or you can select Simpson’s Rule or the Trapezoidal Rule. In each case, the module will compute the estimated value and display a graph of the area computed. You can improve the approximation by increasing the number of subintervals, and you can see the error in the estimated value both graphically and numerically.</p>
+        </div>
+        <div class="panel">
+            <p>Colors are split into their red, green, blue and alpha dimensions. The operation is applied to each color dimension separately. E.g., if the user added two colors, then the green dimension of the result is equal to sum of green dimensions of input colors. If the user multiplied a color by a number, each color dimension will get multiplied.
+
+                Note: arithmetic operation on <b>alpha</b> is not defined, because math operation on colors do not have standard agreed upon meaning. Do not rely on current implemention as it may change in later versions.</p>
+        </div>
+        <div class="panel">
+            <p>
+                Less provides a variety of functions which transform colors, manipulate strings and do maths. They are documented fully in the function reference.
+
+                Using them is pretty straightforward. The following example uses percentage to convert 0.5 to 50%, increases the saturation of a base color by 5% and then sets the background color to one that is lightened by 25% and spun by 8 degrees:
+            </p>
+        </div>
+        <div class="panel">
+            <p>
+                Here we are fetching an image across the network and inserting it into an <img> element. The simplest use of fetch() takes one argument — the path to the resource you want to fetch — and returns a promise containing the response (a Response object).
+            </p>
+        </div>
+        <div class="panel">
+            <p>
+                This kind of functionality was previously achieved using XMLHttpRequest. Fetch provides a better alternative that can be easily used by other technologies such as Service Workers. Fetch also provides a single logical place to define other HTTP-related concepts such as CORS and extensions to HTTP.
+            </p>
+        </div>
     </div>
 
 <script>
-    let panels =  document.querySelectorAll(".panel");
+    let panels =  document.querySelectorAll("#tab-navigation .panel");
+    let panels2 =  document.querySelectorAll("#tab-navigation2 .panel");
     let settings = {
-        container: document.querySelector("#tab-navigation")
+        container: document.querySelector("#tab-navigation"),
+        selected: 1
+    };
+    let settings2 = {
+        container: document.querySelector("#tab-navigation2"),
+        selected: 1
     };
     let tabs = [
         {
-            "title": "<i>Example</i>1",
+            "title": "<i>Italic</i>",
             "content": panels[0]
         },
         {
-            "title": "<b>Example 2</b> ",
+            "title": "<i>Italic</i> and <b>Bold</b> ",
             "content": panels[1]
         },
         {
-            "title": "Sea",
+            "title": "<b>Bold</b>",
             "content": panels[2]
+        },
+        {
+            "title": "Simple text",
+            "content": panels[3]
+        },
+        {
+            "title": "<b>EXAMPLE TEXT</b>",
+            "content": panels[4]
+        }
+    ];
+    let tabs2 = [
+        {
+            "title": "<i>Italic</i>",
+            "content": panels2[0]
+        },
+        {
+            "title": "<i>Italic</i> and <b>Bold</b> ",
+            "content": panels2[1]
+        },
+        {
+            "title": "<b>Bold</b>",
+            "content": panels2[2]
+        },
+        {
+            "title": "Simple text",
+            "content": panels2[3]
+        },
+        {
+            "title": "<b>EXAMPLE TEXT</b>",
+            "content": panels2[4]
         }
     ];
 
     window.cgTabNavigator = new CgTabs(tabs, settings);
+    window.cgTabNavigator = new CgTabs(tabs2, settings2);
 </script>
 
 </body>

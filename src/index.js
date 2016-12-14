@@ -8,9 +8,24 @@ import Panel from './panel';
 import utils from 'cg-component-utils';
 import helpFuncs from './help-funcs';
 
-const TAB_NAVIGATOR_CLASS = 'cg-tabs';
-const TAB_LIST_CLASS = `${TAB_NAVIGATOR_CLASS}-tab-list`;
-const PANEL_LIST_CLASS = `${TAB_NAVIGATOR_CLASS}-panel-list`;
+const TABS_CLASS = 'cg-tabs';
+const TABS_CONTAINER_CLASS = `${TABS_CLASS}__tab-list-container`;
+const PANELS_CONTAINER_CLASS = `${TABS_CLASS}__panel-list-container`;
+const LEFT_SCROLL_ARROW_CLASS = `${TABS_CLASS}__tab-list__left-arrow`;
+const RIGHT_SCROLL_ARROW_CLASS = `${TABS_CLASS}__tab-list__right-arrow`;
+const TAB_LIST_CLASS = `${TABS_CLASS}__tab-list`;
+const PANEL_LIST_CLASS = `${TABS_CLASS}__panel-list`;
+
+const KEY_CODE = {
+  ARROW: {
+    LEFT: 37,
+    RIGHT: 39,
+    UP: 38,
+    DOWN: 40
+  },
+  HOME: 36,
+  END: 35
+};
 
 class CgTabs extends EventEmitter {
 
@@ -30,8 +45,7 @@ class CgTabs extends EventEmitter {
   static get EVENTS() {
     if (!this._EVENTS) {
       this._EVENTS = {
-        SELECT: 'select',
-        CLOSE: 'close'
+        SELECT: 'select'
       };
     }
     return this._EVENTS;
@@ -44,6 +58,8 @@ class CgTabs extends EventEmitter {
    * @constructor
    */
   constructor(options, settings) {
+    CgTabs.countCalls++;
+
     super();
 
     let defSettings = this.constructor.DEFAULT_SETTINGS;
@@ -52,7 +68,6 @@ class CgTabs extends EventEmitter {
     this.options = options;
 
     this.tabs = [];
-    this.removedTabs = [];
 
     this._render();
     this._init();
@@ -62,11 +77,27 @@ class CgTabs extends EventEmitter {
     return this.settings.container;
   }
 
+  get numberOfCalls(){
+    return this.constructor.countCalls;
+  }
+
+  get lastTabIndex(){
+    return (this.tabs.length - 1);
+  }
+
   /**
-   * Close current open tab and save selected
+   * Close current and save selected tab
+   * This method calls only after call Tab's method "select"
    * @param {Tab} tab
+   * @private
    */
-  updateCurrentTab(tab){
+  _updateCurrentTab(tab){
+    if(this.tab === undefined){
+      this.tab = tab;
+
+      return;
+    }
+
     this.tab.close();
     this.tab = tab;
   }
@@ -87,8 +118,38 @@ class CgTabs extends EventEmitter {
     return tab;
   }
 
+  selectNextTab(){
+    let index, nextTab;
+
+    // get index of current tab and select next tab
+    index = this.tabs.indexOf(this.tab);
+    index = index >= (this.tabs.length - 1) ? 0 : ++index;
+
+    nextTab = this.tabs[index];
+    nextTab.select();
+  }
+
+  selectPrevTab(){
+    let index, prevTab;
+
+    // get index of current tab and select next tab
+    index = this.tabs.indexOf(this.tab);
+    index = index <= 0 ? (this.tabs.length - 1) : --index;
+
+    prevTab = this.tabs[index];
+    prevTab.select();
+  }
+
+  selectTab(index){
+    let tab = this.tabs[index];
+
+    if(tab !== undefined){
+      this.tabs[index].select();
+    }
+  }
+
   /**
-   * Remove tab
+   * Remove tab from list
    * @param {Object} tab
    */
   removeTab(tab){
@@ -107,10 +168,14 @@ class CgTabs extends EventEmitter {
    */
   _render() {
     // draw shell for
-    var elementHTML = `
-      <div class="${TAB_NAVIGATOR_CLASS}">
-        <ul class="${TAB_LIST_CLASS}"></ul>
-        <div class="${PANEL_LIST_CLASS}"></div>
+    let elementHTML = `
+      <div class="${TABS_CLASS}" role="tabpanel">
+        <div class="${TABS_CONTAINER_CLASS}">
+          <ul class="${TAB_LIST_CLASS}" role="tablist"></ul>
+        </div>
+        <div class="${PANELS_CONTAINER_CLASS}">
+          <div class="${PANEL_LIST_CLASS}"></div>
+        </div>
       </div>
     `;
 
@@ -118,7 +183,8 @@ class CgTabs extends EventEmitter {
     this._tabListElement = this._rootElement.querySelector(`.${TAB_LIST_CLASS}`);
     this._panelListElement = this._rootElement.querySelector(`.${PANEL_LIST_CLASS}`);
 
-    let tab, options, title, content, i = 0;
+    let tabsId = TABS_CLASS + this.numberOfCalls;
+    let panelId, tabId, tab, options, title, content, i = 0;
 
     for(; i < this.options.length; i++){
       options = this.options[i];
@@ -126,13 +192,42 @@ class CgTabs extends EventEmitter {
       title = options.title;
       content = options.content;
 
+      tabId = tabsId + '__tab' + i;
+      panelId = tabsId + '__panel' + i;
+
       tab = this.addTab(title, content);
 
-      // attach events and close tab
-      tab.on("select", this.updateCurrentTab.bind(this, tab));
+      // initialize identifiers for wai aria
+      tab.id = tabId;
+      tab._element.id = tabId;
+      tab.panel.id = panelId;
+      tab.panel._element.id = panelId;
+
+      // initialize wai aria attributes
+      tab._element.setAttribute("aria-controls", panelId);
+      tab.panel._element.setAttribute("aria-labelledby", tabId);
+
+      // attach event, when user switches between tabs
+      tab._element.addEventListener("keydown", e => {
+        let keyCode = e.which || e.keyCode;
+
+        if (keyCode === KEY_CODE.ARROW.LEFT ||
+            keyCode === KEY_CODE.ARROW.DOWN ) this.selectPrevTab();
+
+        if (keyCode === KEY_CODE.ARROW.RIGHT ||
+            keyCode === KEY_CODE.ARROW.UP ) this.selectNextTab();
+
+        if (keyCode === KEY_CODE.HOME) this.selectTab(0);
+        if (keyCode === KEY_CODE.END) this.selectTab(this.lastTabIndex);
+      });
+
+      // attach custom event for select tab's method
+      tab.on("select", this._updateCurrentTab.bind(this, tab));
+
       tab.close();
     }
 
+    this._rootElement.id = tabsId;
     this.container.appendChild(this._rootElement);
   }
 
@@ -141,9 +236,16 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _init(){
-    this.tab = this.tabs[0];
-    this.tab.select();
+    let index;
+
+    index = this.settings.selected;
+    index = index > this.tabs.length ? 0 : index - 1;
+
+    this.selectTab(index);
+    this.tab._element.blur();
   }
 }
+
+CgTabs.countCalls = 0;
 
 module.exports = CgTabs;

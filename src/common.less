@@ -1,23 +1,31 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 @main-color: #17AC5B;
 @bg-color: #f3f3f3;
 @tab-color: #f3f3f3;
 @tab-hover-color: #ddd;
 
 .cg-tabs {
-  width: 800px;
-  margin: 0 auto;
-}
-ul.cg-tabs-tab-list {
   width: 100%;
+  box-shadow: 0 10px 10px #ddd;
+  font-family: "Roboto", sans-serif;
+}
+.cg-tabs__tab-list-container {
+  position: relative;
+  overflow: hidden;
+}
+ul.cg-tabs__tab-list {
+  position: relative;
   margin: 0;
   padding: 0;
-  background: none;
+  background: #ddd;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
 }
-li.cg-tabs-tab {
+li.cg-tabs__tab {
   display: inline-block;
   padding: 10px 20px;
-  margin-right: 5px;
   background: @tab-hover-color;
   cursor: pointer;
   user-select: none;
@@ -26,15 +34,19 @@ li.cg-tabs-tab {
     background: @tab-hover-color;
   }
 }
-li.cg-tabs-tab.select {
+li.cg-tabs__tab--select {
   background: @tab-color;
+
+  &:hover {
+    background: @tab-color;
+  }
 }
 
-.cg-tabs-panel-list p,
-.cg-tabs-panel-list h1 {
+.cg-tabs__panel-list p,
+.cg-tabs__panel-list h1 {
   margin: 0;
 }
-.cg-tabs-panel-list {
+.cg-tabs__panel-list {
   padding: 20px;
   background: @bg-color;
 }
