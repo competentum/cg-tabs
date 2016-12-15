@@ -12,7 +12,6 @@
 }
 .cg-tabs__tab-list-container {
   position: relative;
-  overflow: hidden;
 }
 ul.cg-tabs__tab-list {
   position: relative;
@@ -21,7 +20,6 @@ ul.cg-tabs__tab-list {
   background: #ddd;
   text-align: left;
   white-space: nowrap;
-  overflow: hidden;
 }
 li.cg-tabs__tab {
   display: inline-block;
@@ -29,6 +27,7 @@ li.cg-tabs__tab {
   background: @tab-hover-color;
   cursor: pointer;
   user-select: none;
+  margin-right: 1px;
 
   &:hover {
     background: @tab-hover-color;
@@ -42,10 +41,6 @@ li.cg-tabs__tab--select {
   }
 }
 
-.cg-tabs__panel-list p,
-.cg-tabs__panel-list h1 {
-  margin: 0;
-}
 .cg-tabs__panel-list {
   padding: 20px;
   background: @bg-color;

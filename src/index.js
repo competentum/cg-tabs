@@ -4,7 +4,6 @@ import './common.less';
 
 import EventEmitter from 'events';
 import Tab from './tab';
-import Panel from './panel';
 import utils from 'cg-component-utils';
 import helpFuncs from './help-funcs';
 
@@ -73,10 +72,18 @@ class CgTabs extends EventEmitter {
     this._init();
   }
 
+  /**
+   * Main element
+   * @returns {Element}
+   */
   get container(){
     return this.settings.container;
   }
 
+  /**
+   * How many times constructor was called
+   * @returns {number}
+   */
   get numberOfCalls(){
     return this.constructor.countCalls;
   }
@@ -113,11 +120,14 @@ class CgTabs extends EventEmitter {
     // write and append new tab on the page
     this.tabs.push(tab);
     this._tabListElement.appendChild(tab._element);
-    this._panelListElement.appendChild(tab.panel._element);
+    this._panelListElement.appendChild(tab._panelElement);
 
     return tab;
   }
 
+  /**
+   * Select next tab from tabs list
+   */
   selectNextTab(){
     let index, nextTab;
 
@@ -129,6 +139,9 @@ class CgTabs extends EventEmitter {
     nextTab.select();
   }
 
+  /**
+   * Select previous tab from tabs list
+   */
   selectPrevTab(){
     let index, prevTab;
 
@@ -140,6 +153,10 @@ class CgTabs extends EventEmitter {
     prevTab.select();
   }
 
+  /**
+   * Select tab from index
+   * @param {Number} index - number from 0 to the number of tabs
+   */
   selectTab(index){
     let tab = this.tabs[index];
 
@@ -149,17 +166,19 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   * Remove tab from list
-   * @param {Object} tab
+   * Remove tab from tabs list
+   * @param {Object} tab - tab to be removed
    */
   removeTab(tab){
+    // get tab position from list
     let position = this.tabs.indexOf(tab);
 
     if (position > -1){
       this.tabs.splice(1, position);
 
+      // remove from view
       this._tabListElement.removeChild(tab._element);
-      this._panelListElement.removeChild(tab.panel._element);
+      this._panelListElement.removeChild(tab._panelElement);
     }
   }
 
@@ -199,13 +218,13 @@ class CgTabs extends EventEmitter {
 
       // initialize identifiers for wai aria
       tab.id = tabId;
+      tab.panelId = panelId;
       tab._element.id = tabId;
-      tab.panel.id = panelId;
-      tab.panel._element.id = panelId;
+      tab._panelElement.id = panelId;
 
       // initialize wai aria attributes
       tab._element.setAttribute("aria-controls", panelId);
-      tab.panel._element.setAttribute("aria-labelledby", tabId);
+      tab._panelElement.setAttribute("aria-labelledby", tabId);
 
       // attach event, when user switches between tabs
       tab._element.addEventListener("keydown", e => {
@@ -232,7 +251,7 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   * Initialize state of app
+   * Initialize state of component
    * @private
    */
   _init(){
@@ -246,6 +265,11 @@ class CgTabs extends EventEmitter {
   }
 }
 
+/**
+ * Save how many times constructor was called.
+ * It's need to create wai aria support
+ * @type {number}
+ */
 CgTabs.countCalls = 0;
 
 module.exports = CgTabs;
