@@ -2,16 +2,16 @@
 
 import './common.less';
 
-import EventEmitter from 'events';
 import Tab from './tab';
-import utils from 'cg-component-utils';
+import EventEmitter from 'events';
 import helpFuncs from './help-funcs';
+import utils from 'cg-component-utils';
+import constants from './const';
+import merge from 'merge';
 
-const TABS_CLASS = 'cg-tabs';
+const TABS_CLASS = constants.CLASSES.TABS_CLASS;
 const TABS_CONTAINER_CLASS = `${TABS_CLASS}__tab-list-container`;
 const PANELS_CONTAINER_CLASS = `${TABS_CLASS}__panel-list-container`;
-const LEFT_SCROLL_ARROW_CLASS = `${TABS_CLASS}__tab-list__left-arrow`;
-const RIGHT_SCROLL_ARROW_CLASS = `${TABS_CLASS}__tab-list__right-arrow`;
 const TAB_LIST_CLASS = `${TABS_CLASS}__tab-list`;
 const PANEL_LIST_CLASS = `${TABS_CLASS}__panel-list`;
 
@@ -35,7 +35,7 @@ class CgTabs extends EventEmitter {
   static get DEFAULT_SETTINGS() {
     if (!this._DEFAULT_SETTINGS) {
       this._DEFAULT_SETTINGS = {
-        // todo: add defaults here
+        selected: 0
       };
     }
     return this._DEFAULT_SETTINGS;
@@ -61,14 +61,15 @@ class CgTabs extends EventEmitter {
 
     super();
 
-    let defSettings = this.constructor.DEFAULT_SETTINGS;
-
-    this.settings = helpFuncs.extend({}, defSettings, settings);
+    this.settings =
+      merge.recursive(true, this.constructor.DEFAULT_SETTINGS,
+                      settings);
     this.options = options;
 
     this.tabs = [];
 
     this._render();
+    this._defineContainer();
     this._init();
   }
 
@@ -76,37 +77,16 @@ class CgTabs extends EventEmitter {
    * Main element
    * @returns {Element}
    */
-  get container(){
+  get container() {
     return this.settings.container;
   }
 
   /**
-   * How many times constructor was called
-   * @returns {number}
+   *
+   * @param {Element} element
    */
-  get numberOfCalls(){
-    return this.constructor.countCalls;
-  }
-
-  get lastTabIndex(){
-    return (this.tabs.length - 1);
-  }
-
-  /**
-   * Close current and save selected tab
-   * This method calls only after call Tab's method "select"
-   * @param {Tab} tab
-   * @private
-   */
-  _updateCurrentTab(tab){
-    if(this.tab === undefined){
-      this.tab = tab;
-
-      return;
-    }
-
-    this.tab.close();
-    this.tab = tab;
+  set container(element) {
+    this.settings.container = element;
   }
 
   /**
@@ -114,7 +94,7 @@ class CgTabs extends EventEmitter {
    * @param title
    * @param content
    */
-  addTab(title, content){
+  addTab(title, content) {
     let tab = new Tab(title, content);
 
     // write and append new tab on the page
@@ -128,7 +108,7 @@ class CgTabs extends EventEmitter {
   /**
    * Select next tab from tabs list
    */
-  selectNextTab(){
+  selectNextTab() {
     let index, nextTab;
 
     // get index of current tab and select next tab
@@ -142,7 +122,7 @@ class CgTabs extends EventEmitter {
   /**
    * Select previous tab from tabs list
    */
-  selectPrevTab(){
+  selectPrevTab() {
     let index, prevTab;
 
     // get index of current tab and select next tab
@@ -157,11 +137,11 @@ class CgTabs extends EventEmitter {
    * Select tab from index
    * @param {Number} index - number from 0 to the number of tabs
    */
-  selectTab(index){
+  selectTab(index) {
     let tab = this.tabs[index];
 
-    if(tab !== undefined){
-      this.tabs[index].select();
+    if (typeof tab !== 'undefined') {
+      tab.select();
     }
   }
 
@@ -169,17 +149,32 @@ class CgTabs extends EventEmitter {
    * Remove tab from tabs list
    * @param {Object} tab - tab to be removed
    */
-  removeTab(tab){
+  removeTab(tab) {
     // get tab position from list
     let position = this.tabs.indexOf(tab);
 
-    if (position > -1){
+    if (position > -1) {
       this.tabs.splice(1, position);
 
-      // remove from view
-      this._tabListElement.removeChild(tab._element);
-      this._panelListElement.removeChild(tab._panelElement);
+      tab.remove();
     }
+  }
+
+  /**
+   * Close current and save selected tab
+   * This method calls only after call Tab's method "select"
+   * @param {Tab} tab
+   * @private
+   */
+  _updateCurrentTab(tab) {
+    if (this.tab === undefined) {
+      this.tab = tab;
+
+      return;
+    }
+
+    this.tab.close();
+    this.tab = tab;
   }
 
   /**
@@ -187,81 +182,90 @@ class CgTabs extends EventEmitter {
    */
   _render() {
     // draw shell for
-    let elementHTML = `
-      <div class="${TABS_CLASS}" role="tabpanel">
-        <div class="${TABS_CONTAINER_CLASS}">
-          <ul class="${TAB_LIST_CLASS}" role="tablist"></ul>
-        </div>
-        <div class="${PANELS_CONTAINER_CLASS}">
-          <div class="${PANEL_LIST_CLASS}"></div>
-        </div>
-      </div>
-    `;
+    let tabListContainer = `<div class="${TABS_CONTAINER_CLASS}">
+        <ul class="${TAB_LIST_CLASS}" role="tablist"></ul>
+      </div>`;
+    let panelListContainer = `<div class="${PANELS_CONTAINER_CLASS}">
+        <div class="${PANEL_LIST_CLASS}"></div>
+      </div>`;
 
-    this._rootElement = utils.createHTML(elementHTML);
-    this._tabListElement = this._rootElement.querySelector(`.${TAB_LIST_CLASS}`);
-    this._panelListElement = this._rootElement.querySelector(`.${PANEL_LIST_CLASS}`);
+    tabListContainer = utils.createHTML(tabListContainer);
+    panelListContainer = utils.createHTML(panelListContainer);
 
-    let tabsId = TABS_CLASS + this.numberOfCalls;
-    let panelId, tabId, tab, options, title, content, i = 0;
+    this._tabListElement = tabListContainer.querySelector(`.${TAB_LIST_CLASS}`);
+    this._panelListElement = panelListContainer.querySelector(`.${PANEL_LIST_CLASS}`);
 
-    for(; i < this.options.length; i++){
-      options = this.options[i];
+    let tab;
+    let title;
+    let content;
 
-      title = options.title;
-      content = options.content;
-
-      tabId = tabsId + '__tab' + i;
-      panelId = tabsId + '__panel' + i;
+    for (let i = 0; i < this.options.length; i++) {
+      title = this.options[i].title;
+      content = this.options[i].content;
 
       tab = this.addTab(title, content);
 
-      // initialize identifiers for wai aria
-      tab.id = tabId;
-      tab.panelId = panelId;
-      tab._element.id = tabId;
-      tab._panelElement.id = panelId;
-
-      // initialize wai aria attributes
-      tab._element.setAttribute("aria-controls", panelId);
-      tab._panelElement.setAttribute("aria-labelledby", tabId);
-
-      // attach event, when user switches between tabs
-      tab._element.addEventListener("keydown", e => {
+      // attach event, for switching between tabs
+      tab._element.addEventListener('keydown', e => {
         let keyCode = e.which || e.keyCode;
 
-        if (keyCode === KEY_CODE.ARROW.LEFT ||
-            keyCode === KEY_CODE.ARROW.DOWN ) this.selectPrevTab();
-
-        if (keyCode === KEY_CODE.ARROW.RIGHT ||
-            keyCode === KEY_CODE.ARROW.UP ) this.selectNextTab();
-
-        if (keyCode === KEY_CODE.HOME) this.selectTab(0);
-        if (keyCode === KEY_CODE.END) this.selectTab(this.lastTabIndex);
+        switch (keyCode) {
+          // for previous tab
+          case KEY_CODE.ARROW.LEFT:
+          case KEY_CODE.ARROW.DOWN:
+            this.selectPrevTab();
+            break;
+          // for next tab
+          case KEY_CODE.ARROW.RIGHT:
+          case KEY_CODE.ARROW.UP:
+            this.selectNextTab();
+            break;
+          // switch to first tab
+          case KEY_CODE.HOME:
+            this.selectTab(0);
+            break;
+          // switch to last tab
+          case KEY_CODE.END:
+            this.selectTab(this.tabs.length - 1);
+            break;
+        }
       });
 
       // attach custom event for select tab's method
-      tab.on("select", this._updateCurrentTab.bind(this, tab));
+      tab.on('select', this._updateCurrentTab.bind(this, tab));
 
       tab.close();
     }
+  }
 
-    this._rootElement.id = tabsId;
-    this.container.appendChild(this._rootElement);
+  /**
+   * Create container if it's need
+   * Or just append children for current element
+   * @private
+   */
+  _defineContainer(){
+    // create if container is undefined or not an Element
+    if (!(this.container instanceof HTMLElement)) {
+      this.container = utils.createHTML(`<div></div>`);
+    }
+
+    this.container.classList.add(`${TABS_CLASS}`);
+
+    this.container.appendChild(this._tabListElement);
+    this.container.appendChild(this._panelListElement);
   }
 
   /**
    * Initialize state of component
    * @private
    */
-  _init(){
+  _init() {
     let index;
 
     index = this.settings.selected;
-    index = index > this.tabs.length ? 0 : index - 1;
+    index = index > this.tabs.length ? 0 : index;
 
     this.selectTab(index);
-    this.tab._element.blur();
   }
 }
 

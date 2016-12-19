@@ -1,7 +1,7 @@
 {
   "name": "cg-tabs",
   "version": "0.0.1",
-  "description": "Template Project for Competentum Group Components",
+  "description": "Accessibility Tabs for Competentum Group Components",
   "main": "build/cg-tabs.min.js",
   "scripts": {
     "test": "jest"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/competentum/cg-tabs.git"
   },
-  "author": "Alexey Pilyugin",
+  "author": "Daniil Grishkin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/competentum/cg-tabs/issues"
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "cg-component-utils": "^1.0.0",
-    "events": "^1.1.0"
+    "events": "^1.1.0",
+    "merge": "^1.2.0"
   }
 }

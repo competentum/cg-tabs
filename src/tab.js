@@ -1,18 +1,27 @@
 import EventEmitter from 'events';
 import utils from 'cg-component-utils';
 import helpFuncs from './help-funcs';
+import constants from './const';
 
-const TABS_CLASS = 'cg-tabs';
+const TABS_CLASS = constants.CLASSES.TABS_CLASS;
 const TAB_CLASS = `${TABS_CLASS}__tab`;
 const TAB_SELECT_CLASS = `${TAB_CLASS}--select`;
 const PANEL_CLASS = `${TABS_CLASS}__panel`;
 
 class Tab extends EventEmitter {
+  // TODO: merge arguments into object
   constructor(title, content){
     super();
 
-    this._render(title);
-    this._renderPanel(content);
+    this.title = title;
+    this.content = content;
+
+    // define identifiers
+    this.id = helpFuncs.generateId();
+    this.panelId = helpFuncs.generateId();
+
+    this._render();
+    this._renderPanel();
   }
 
   /**
@@ -22,15 +31,14 @@ class Tab extends EventEmitter {
     if(this.selected) return;
 
     // call listeners for select event
-    this.emit("select");
+    this.emit('select');
 
     // set wai aria attributes
-    this._element.setAttribute("tabindex", 0);
-    this._element.setAttribute("aria-selected", "true");
+    this._element.setAttribute('tabindex', 0);
+    this._element.setAttribute('aria-selected', 'true');
 
     // remove selected class and focus on the tab
     this._element.classList.add(TAB_SELECT_CLASS);
-    this._element.focus();
 
     // show panel associated with this tab
     this.showPanel();
@@ -43,30 +51,40 @@ class Tab extends EventEmitter {
    */
   close(){
     // set wai aria attributes
-    this._element.setAttribute("tabindex", -1);
-    this._element.setAttribute("aria-selected", "false");
+    this._element.setAttribute('tabindex', -1);
+    this._element.setAttribute('aria-selected', 'false');
     this._element.classList.remove(TAB_SELECT_CLASS);
 
-    // show panel associated with this tab
+    // hide panel associated with this tab
     this.hidePanel();
 
     this.selected = false;
+  }
+
+  remove(){
+    let tabParent = this._element.parentNode;
+    let panelParent = this._panelElement.parentNode;
+
+    if(tabParent && panelParent){
+      tabParent.removeChild(this._element);
+      panelParent.removeChild(this._panelElement);
+    }
   }
 
   /**
    * Hiding panel associated with this tab
    */
   hidePanel(){
-    this._panelElement.style.display = "none";
-    this._panelElement.setAttribute("aria-hidden", "true");
+    this._panelElement.style.display = 'none';
+    this._panelElement.setAttribute('aria-hidden', 'true');
   }
 
   /**
    * Showing panel associated with this tab
    */
   showPanel(){
-    this._panelElement.style.display = "";
-    this._panelElement.setAttribute("aria-hidden", "false");
+    this._panelElement.style.display = '';
+    this._panelElement.setAttribute('aria-hidden', 'false');
   }
 
   /**
@@ -74,27 +92,30 @@ class Tab extends EventEmitter {
    * @param {String|Element} title - tab's title
    * @private
    */
-  _render(title){
+  _render(){
     // get type of title
-    let type = helpFuncs.getType(title);
+    let type = typeof this.title;
 
     // create wrapper for tab
-    this._element = utils.createHTML(`<li class="${TAB_CLASS}"></li>`);
-    this._element.addEventListener("click", this.select.bind(this));
+    this._element = utils.createHTML(`<li class='${TAB_CLASS}'></li>`);
+    this._element.addEventListener('click', this.select.bind(this));
 
-    this._element.setAttribute("role", "tab");
+    // add attributes for wai aria support
+    this._element.id = this.id;
+    this._element.setAttribute('role', 'tab');
+    this._element.setAttribute('aria-controls', this.panelId);
 
-    if(type === "string"){
+    if(type === 'string'){
       // try to find element on the page and append that
       // else just inner this string into an element
       try {
-        let child = document.querySelector(title);
+        let child = document.querySelector(this.title);
         this._element.appendChild(child);
       } catch(e){
-        this._element.innerHTML = title;
+        this._element.innerHTML = this.title;
       }
     } else {
-      throw new Error(title + ". Your type - " + type + ". title must be a String or Element");
+      throw new Error(this.title + '. Your type - ' + type + '. title must be a String or an Element');
     }
   }
 
@@ -103,31 +124,33 @@ class Tab extends EventEmitter {
    * @param {String|Element} content
    * @private
    */
-  _renderPanel(content){
-    // get type of title
-    let type = helpFuncs.getType(content);
-
+  _renderPanel(){
     // create wrapper for tab
-    this._panelElement = utils.createHTML(`<div class="${PANEL_CLASS}"></div>`);
-    this._panelElement.setAttribute("role", "tabpanel");
+    this._panelElement = utils.createHTML(`<div class='${PANEL_CLASS}'></div>`);
 
-    if(type === "html"){
-      this._panelElement.appendChild(content);
+    // add attributes for wai aria support
+    this._panelElement.id = this.panelId;
+    this._panelElement.setAttribute('role', 'tabpanel');
+    this._panelElement.setAttribute('aria-labelledby', this.id);
+
+    if(this.content instanceof HTMLElement){
+      this._panelElement.appendChild(this.content);
 
       return;
     }
 
-    if(type === "string"){
+    if(typeof this.content === 'string'){
       let child;
 
       try {
         // try to get element
-        child = document.querySelector(content);
+        child = document.querySelector(this.content);
         this._panelElement.appendChild(child);
       } catch(e){
         // if string has a .html part - load html
-        if(content.search(/\.html|http|https/g) > -1){
-          fetch(content)
+        if(this.content.search(/\.html|http|https/g) > -1){
+          // TODO: create polyfill
+          fetch(this.content)
             .then(response => {
               return response.text();
             })
@@ -135,7 +158,7 @@ class Tab extends EventEmitter {
               this._panelElement.innerHTML = text;
             });
         } else {
-          this._panelElement.innerHTML = content;
+          this._panelElement.innerHTML = this.content;
         }
       }
     }
