@@ -244,7 +244,7 @@ class CgTabs extends EventEmitter {
       this.settings.container = this._rootElement;
     }
 
-    utils.addClass(this._rootElement, TABS_CLASS)
+    utils.addClass(this._rootElement, TABS_CLASS);
   }
 
   /**

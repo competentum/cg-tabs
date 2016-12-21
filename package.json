@@ -3,7 +3,13 @@
   "version": "0.0.1",
   "description": "Accessibility Tabs Component",
   "main": "build/cg-tabs.min.js",
+  "pre-commit": [
+    "test",
+    "lint"
+  ],
   "scripts": {
+    "build": "webpack",
+    "lint": "gulp lint",
     "test": "jest"
   },
   "repository": {
@@ -44,7 +50,6 @@
   "dependencies": {
     "cg-component-utils": "^1.0.0",
     "events": "^1.1.0",
-    "fetch-polyfill": "^0.8.2",
     "merge": "^1.2.0"
   }
 }
