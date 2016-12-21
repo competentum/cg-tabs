@@ -7,6 +7,7 @@ export default {
    * @returns {string}
    */
   generateId: function(length){
+    length = parseInt(length, 10);
     length = isNaN(length) ? 4 : Math.abs(length);
     length = Math.max(1, Math.min(length, 20));
 

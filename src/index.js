@@ -1,10 +1,10 @@
 'use strict';
 
 import './common.less';
+import 'mouse-focused';
 
 import Tab from './tab';
 import EventEmitter from 'events';
-import helpFuncs from './help-funcs';
 import utils from 'cg-component-utils';
 import constants from './const';
 import merge from 'merge';
@@ -52,24 +52,23 @@ class CgTabs extends EventEmitter {
 
   /**
    *
-   * @param {Array} options
    * @param {Object} [settings]
+   * @param {Array} options
+   *    @property {String} options[n].title - title for tab
+   *    @property {String} options[n].content - content for panel list
+   *    @property {Element} options[n].content - content for panel list
    * @constructor
    */
   constructor(options, settings) {
-    CgTabs.countCalls++;
-
     super();
 
-    this.settings =
-      merge.recursive(true, this.constructor.DEFAULT_SETTINGS,
-                      settings);
+    this.settings = merge.recursive(true, this.constructor.DEFAULT_SETTINGS, settings);
     this.options = options;
 
     this.tabs = [];
 
-    this._render();
     this._defineContainer();
+    this._render();
     this._init();
   }
 
@@ -82,20 +81,11 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   *
-   * @param {Element} element
-   */
-  set container(element) {
-    this.settings.container = element;
-  }
-
-  /**
    * add Tab element to current state
-   * @param title
-   * @param content
+   * @param {Object} [options]
    */
-  addTab(title, content) {
-    let tab = new Tab(title, content);
+  addTab(options) {
+    let tab = new Tab(options);
 
     // write and append new tab on the page
     this.tabs.push(tab);
@@ -195,15 +185,8 @@ class CgTabs extends EventEmitter {
     this._tabListElement = tabListContainer.querySelector(`.${TAB_LIST_CLASS}`);
     this._panelListElement = panelListContainer.querySelector(`.${PANEL_LIST_CLASS}`);
 
-    let tab;
-    let title;
-    let content;
-
-    for (let i = 0; i < this.options.length; i++) {
-      title = this.options[i].title;
-      content = this.options[i].content;
-
-      tab = this.addTab(title, content);
+    for (let tab, i = 0; i < this.options.length; i++) {
+      tab = this.addTab(this.options[i]);
 
       // attach event, for switching between tabs
       tab._element.addEventListener('keydown', e => {
@@ -214,19 +197,23 @@ class CgTabs extends EventEmitter {
           case KEY_CODE.ARROW.LEFT:
           case KEY_CODE.ARROW.DOWN:
             this.selectPrevTab();
+            this.tab.focus();
             break;
           // for next tab
           case KEY_CODE.ARROW.RIGHT:
           case KEY_CODE.ARROW.UP:
             this.selectNextTab();
+            this.tab.focus();
             break;
           // switch to first tab
           case KEY_CODE.HOME:
             this.selectTab(0);
+            this.tab.focus();
             break;
           // switch to last tab
           case KEY_CODE.END:
             this.selectTab(this.tabs.length - 1);
+            this.tab.focus();
             break;
         }
       });
@@ -236,6 +223,9 @@ class CgTabs extends EventEmitter {
 
       tab.close();
     }
+
+    this._rootElement.appendChild(tabListContainer);
+    this._rootElement.appendChild(panelListContainer);
   }
 
   /**
@@ -243,16 +233,18 @@ class CgTabs extends EventEmitter {
    * Or just append children for current element
    * @private
    */
-  _defineContainer(){
-    // create if container is undefined or not an Element
-    if (!(this.container instanceof HTMLElement)) {
-      this.container = utils.createHTML(`<div></div>`);
+  _defineContainer() {
+    this._rootElement = this.container;
+
+    // create container, if its undefined or not an Element
+    if (!(this._rootElement instanceof HTMLElement)) {
+      this._rootElement = utils.createHTML('<div></div>');
+
+      // redefine container one time
+      this.settings.container = this._rootElement;
     }
 
-    this.container.classList.add(`${TABS_CLASS}`);
-
-    this.container.appendChild(this._tabListElement);
-    this.container.appendChild(this._panelListElement);
+    utils.addClass(this._rootElement, TABS_CLASS)
   }
 
   /**
@@ -268,12 +260,5 @@ class CgTabs extends EventEmitter {
     this.selectTab(index);
   }
 }
-
-/**
- * Save how many times constructor was called.
- * It's need to create wai aria support
- * @type {number}
- */
-CgTabs.countCalls = 0;
 
 module.exports = CgTabs;

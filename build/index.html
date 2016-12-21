@@ -6,7 +6,7 @@
     <script type="text/javascript" src="cg-tabs.js"></script>
     <style>
         #container {
-            width: 600px;
+            width: 700px;
             margin: 20px auto;
         }
     </style>
@@ -57,14 +57,10 @@
         {
             "title": "Simple text",
             "content": panels[3]
-        },
-        {
-            "title": "<b>HTML content</b>",
-            "content": "article.html"
         }
     ];
 
-    window.cgTabNavigator = new CgTabs(tabs, settings);
+    window.cgTabs = new CgTabs(tabs, settings);
 </script>
 
 </body>

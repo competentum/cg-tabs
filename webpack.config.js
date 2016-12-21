@@ -13,6 +13,7 @@ var entry = {};
 entry[pkg.name] = [path.resolve(__dirname, './src/index.js')];
 
 module.exports = {
+  devtool: 'eval',
   entry: entry,
   output: {
     path: buildPath,

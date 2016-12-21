@@ -1,51 +1,76 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
-@main-color: #17AC5B;
+@prefix: cg-tabs;
 @bg-color: #f3f3f3;
-@tab-color: #f3f3f3;
-@tab-hover-color: #ddd;
+@tab-color: #06ae60;
 
-.cg-tabs * {
+.@{prefix} * {
   margin: 0;
   padding: 0;
 }
-.cg-tabs {
+.@{prefix} {
   width: 100%;
   box-shadow: 0 10px 10px #ddd;
   font-family: "Roboto", sans-serif;
 }
-.cg-tabs__tab-list-container {
+.@{prefix}__tab-list-container,
+.@{prefix}__panel-list-container {
   position: relative;
+  width: 100%;
 }
-ul.cg-tabs__tab-list {
+ul.@{prefix}__tab-list {
   position: relative;
   margin: 0;
   padding: 0;
-  background: #ddd;
+  background: @tab-color;
   text-align: left;
-  white-space: nowrap;
 }
-li.cg-tabs__tab {
+li.@{prefix}__tab {
+  position: relative;
   display: inline-block;
   padding: 10px 20px;
-  background: @tab-hover-color;
+  background: @tab-color;
+  color: #fff;
   cursor: pointer;
   user-select: none;
-  margin-right: 1px;
 
-  &:hover {
-    background: @tab-hover-color;
+  &:focus {
+    outline: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      box-sizing: border-box;
+      border: 1px dashed #fff;
+      border-top: none;
+    }
   }
 }
-li.cg-tabs__tab--select {
-  background: @tab-color;
+li.@{prefix}__tab.is-mouse-focused {
+  &:focus {
+    outline: none;
 
-  &:hover {
-    background: @tab-color;
+    &::after {
+      display: none;
+    }
   }
 }
-
-.cg-tabs__panel-list {
+li.@{prefix}__tab--select {
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+  }
+}
+.@{prefix}__panel-list {
   padding: 20px;
   background: @bg-color;
 }
