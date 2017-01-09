@@ -9,6 +9,8 @@ const TAB_CLASS = `${TABS_CLASS}__tab`;
 const TAB_SELECT_CLASS = `${TAB_CLASS}--select`;
 const PANEL_CLASS = `${TABS_CLASS}__panel`;
 
+//todo: describe options type
+
 class Tab extends EventEmitter {
 
   /**
@@ -28,8 +30,10 @@ class Tab extends EventEmitter {
   constructor(options) {
     super();
 
+    //todo: Do options property need for something? It seems redundant
     // merge default options and users options; set links for options
     this.options = merge.recursive(true, this.constructor.DEFAULT_OPTIONS, options);
+    //todo: add setters
     this.title = this.options.title;
     this.content = this.options.content;
 

@@ -28,6 +28,8 @@ const KEY_CODE = {
 
 class CgTabs extends EventEmitter {
 
+  //todo: describe settings type
+
   /**
    * Default tab navigation's settings
    * @returns {Object}
@@ -50,6 +52,7 @@ class CgTabs extends EventEmitter {
     return this._EVENTS;
   }
 
+  //todo: think about good naming
   /**
    *
    * @param {Object} [settings]
@@ -62,11 +65,13 @@ class CgTabs extends EventEmitter {
   constructor(options, settings) {
     super();
 
+    //todo: private
     this.settings = merge.recursive(true, this.constructor.DEFAULT_SETTINGS, settings);
     this.options = options;
 
     this.tabs = [];
 
+    //todo: _applySettings
     this._defineContainer();
     this._render();
     this._init();
@@ -80,6 +85,7 @@ class CgTabs extends EventEmitter {
     return this.settings.container;
   }
 
+  //todo: add possibility to add tab in any place, not only at the end.
   /**
    * add Tab element to current state
    * @param {Object} [options]
@@ -135,6 +141,8 @@ class CgTabs extends EventEmitter {
     }
   }
 
+  //todo: add removing tab by index
+  //todo: type Object -> Tab
   /**
    * Remove tab from tabs list
    * @param {Object} tab - tab to be removed
@@ -188,6 +196,7 @@ class CgTabs extends EventEmitter {
     for (let tab, i = 0; i < this.options.length; i++) {
       tab = this.addTab(this.options[i]);
 
+      //todo: if tab will be added by component's user these events will not be added
       // attach event, for switching between tabs
       tab._element.addEventListener('keydown', e => {
         let keyCode = e.which || e.keyCode;
@@ -234,10 +243,14 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _defineContainer() {
+    //todo: container and _rootElement should be different elements. _rootElement should be appended to container. Container element must NOT be changed by this script.
     this._rootElement = this.container;
+    //todo: also case when container have defined height is not provided (styles should be added)
 
+    //todo: handle case when this.container is element id
     // create container, if its undefined or not an Element
     if (!(this._rootElement instanceof HTMLElement)) {
+      //todo: native document.createElement('div'); will be better for this case
       this._rootElement = utils.createHTML('<div></div>');
 
       // redefine container one time
