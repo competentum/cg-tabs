@@ -14,28 +14,31 @@ const PANEL_CLASS = `${TABS_CLASS}__panel`;
 class Tab extends EventEmitter {
 
   /**
-   *
+   * Tab's settings
+   * @property {element|string} title - tab's title
+   * @property {element|string} content
    * @returns {Object}
+   * @static
    */
-  static get DEFAULT_OPTIONS() {
-    if (!this._DEFAULT_OPTIONS) {
-      this._DEFAULT_OPTIONS = {
+  static get DEFAULT_SETTINGS() {
+    if (!this._DEFAULT_SETTINGS) {
+      this._DEFAULT_SETTINGS = {
         title: 'Tab',
         content: 'Example text'
       };
     }
-    return this._DEFAULT_OPTIONS;
+    return this._DEFAULT_SETTINGS;
   }
 
-  constructor(options) {
+  constructor(settings) {
     super();
 
-    //todo: Do options property need for something? It seems redundant
-    // merge default options and users options; set links for options
-    this.options = merge.recursive(true, this.constructor.DEFAULT_OPTIONS, options);
+    //todo: Do settings property need for something? It seems redundant
+    // merge default settings and users settings; set links for settings
+    this.settings = merge.recursive(true, this.constructor.DEFAULT_SETTINGS, settings);
     //todo: add setters
-    this.title = this.options.title;
-    this.content = this.options.content;
+    this.title = this.settings.title;
+    this.content = this.settings.content;
 
     // define identifiers
     this.id = helpFuncs.generateId();

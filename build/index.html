@@ -7,6 +7,7 @@
     <style>
         #container {
             width: 700px;
+            height: 350px;
             margin: 20px auto;
         }
     </style>
@@ -39,28 +40,28 @@
 <script>
     let panels =  document.querySelectorAll("#container .panel");
     let settings = {
-        container: document.querySelector("#container")
+        container: document.querySelector("#container"),
+        tabs: [
+            {
+                "title": "<i>Italic</i>",
+                "content": panels[0]
+            },
+            {
+                "title": "<i>Italic</i> and <b>Bold</b> ",
+                "content": panels[1]
+            },
+            {
+                "title": "<b>Bold</b>",
+                "content": panels[2]
+            },
+            {
+                "title": "Simple text",
+                "content": panels[3]
+            }
+        ]
     };
-    let tabs = [
-        {
-            "title": "<i>Italic</i>",
-            "content": panels[0]
-        },
-        {
-            "title": "<i>Italic</i> and <b>Bold</b> ",
-            "content": panels[1]
-        },
-        {
-            "title": "<b>Bold</b>",
-            "content": panels[2]
-        },
-        {
-            "title": "Simple text",
-            "content": panels[3]
-        }
-    ];
 
-    window.cgTabs = new CgTabs(tabs, settings);
+    window.cgTabs = new CgTabs(settings);
 </script>
 
 </body>

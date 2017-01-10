@@ -1,7 +1,7 @@
 'use strict';
 
 import './common.less';
-import 'mouse-focused';
+//import 'mouse-focused';
 
 import Tab from './tab';
 import EventEmitter from 'events';
@@ -27,22 +27,36 @@ const KEY_CODE = {
 };
 
 class CgTabs extends EventEmitter {
-
-  //todo: describe settings type
-
   /**
    * Default tab navigation's settings
-   * @returns {Object}
+   * @property {string|element} container - container where will be placed tabs
+   * @property {number}         selected - index first selected tab
+   * @property {array}          tabs - tabs list
+   * @property {string}         options[].title - title for tab
+   * @property {element|string} options[].content - content for panel list
+   * @returns {object}
    */
   static get DEFAULT_SETTINGS() {
     if (!this._DEFAULT_SETTINGS) {
       this._DEFAULT_SETTINGS = {
-        selected: 0
+        selected: 0,
+        container: document.body,
+        tabs: [
+          {
+            title: 'Sample',
+            content: 'Example Text'
+          }
+        ]
       };
     }
     return this._DEFAULT_SETTINGS;
   }
 
+  /**
+   * @property {string} SELECT - emit when user select one of the tabs
+   * @returns {object}
+   * @static
+   */
   static get EVENTS() {
     if (!this._EVENTS) {
       this._EVENTS = {
@@ -52,51 +66,116 @@ class CgTabs extends EventEmitter {
     return this._EVENTS;
   }
 
-  //todo: think about good naming
   /**
-   *
-   * @param {Object} [settings]
-   * @param {Array} options
-   *    @property {String} options[n].title - title for tab
-   *    @property {String} options[n].content - content for panel list
-   *    @property {Element} options[n].content - content for panel list
+   * @param {Object} [settings] - user's settings. extends with default settings
    * @constructor
    */
-  constructor(options, settings) {
+  constructor(settings) {
     super();
-
-    //todo: private
-    this.settings = merge.recursive(true, this.constructor.DEFAULT_SETTINGS, settings);
-    this.options = options;
 
     this.tabs = [];
 
     //todo: _applySettings
-    this._defineContainer();
     this._render();
+    this._setSettings(settings);
+    this._createTabs();
     this._init();
   }
 
   /**
-   * Main element
-   * @returns {Element}
+   * The main container
+   * @returns {element}
    */
   get container() {
-    return this.settings.container;
+    return this._settings.container;
+  }
+
+  /**
+   * Getter for the main container
+   * @param {string|element} container
+   * @description placed current component's node into the new container
+   */
+  set container(container) {
+    this._settings.container = container;
+    this._setContainer();
+  }
+
+  /**
+   * Setter for selecting tab
+   * @param {number} value
+   */
+  set selected(value){
+    if(value == undefined) return;
+
+    this._settings.selected = value;
+    this.selectTab(value);
+  }
+
+  /**
+   * Getter for selecting tab
+   * @returns {number}
+   */
+  get selected(){
+    return this._settings.selected;
   }
 
   //todo: add possibility to add tab in any place, not only at the end.
   /**
    * add Tab element to current state
    * @param {Object} [options]
+   * @param {Number} [position]
    */
-  addTab(options) {
+  addTab(options, position) {
     let tab = new Tab(options);
 
     // write and append new tab on the page
     this.tabs.push(tab);
-    this._tabListElement.appendChild(tab._element);
+
+    if(typeof position === 'number'){
+      if(position !== this.tabs.length){
+        let reference = this.tabs[position];
+
+        this._tabListElement.insertBefore(tab._element, reference);
+      }
+    } else {
+      this._tabListElement.appendChild(tab._element);
+    }
+
     this._panelListElement.appendChild(tab._panelElement);
+
+    // attach custom event for select tab's method
+    tab.on('select', this._updateCurrentTab.bind(this, tab));
+
+    //todo: if tab will be added by component's user these events will not be added
+    // attach event, for switching between tabs
+    tab._element.addEventListener('keydown', e => {
+      let keyCode = e.which || e.keyCode;
+
+      switch (keyCode) {
+        // for previous tab
+        case KEY_CODE.ARROW.LEFT:
+        case KEY_CODE.ARROW.DOWN:
+          this.selectPrevTab();
+          this.tab.focus();
+          break;
+        // for next tab
+        case KEY_CODE.ARROW.RIGHT:
+        case KEY_CODE.ARROW.UP:
+          this.selectNextTab();
+          this.tab.focus();
+          break;
+        // switch to first tab
+        case KEY_CODE.HOME:
+          this.selectTab(0);
+          this.tab.focus();
+          break;
+        // switch to last tab
+        case KEY_CODE.END:
+          this.selectTab(this.tabs.length - 1);
+          this.tab.focus();
+          break;
+      }
+    });
 
     return tab;
   }
@@ -145,9 +224,18 @@ class CgTabs extends EventEmitter {
   //todo: type Object -> Tab
   /**
    * Remove tab from tabs list
-   * @param {Object} tab - tab to be removed
+   * @param {Tab|Number} tab - tab or tab's index to be removed
    */
   removeTab(tab) {
+    if(typeof tab === 'number'){
+      if(this.tabs[tab] !== undefined){
+        this.tabs[tab].remove();
+        this.tabs.splice(1, tab);
+      }
+
+      return;
+    }
+
     // get tab position from list
     let position = this.tabs.indexOf(tab);
 
@@ -175,10 +263,84 @@ class CgTabs extends EventEmitter {
     this.tab = tab;
   }
 
+  static _fixSettings(settings) {
+    for (let name in settings) {
+      if (settings.hasOwnProperty(name)) {
+        settings[name] = this._fixSetting(name, settings[name]);
+      }
+    }
+
+    return settings;
+  }
+
+  static _fixSetting(name, value) {
+    const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+    switch (name) {
+      // field 'selected' should be a number
+      case 'selected':
+        if (isNaN(value)) {
+          value = DEFAULT_SETTINGS[name];
+        }
+        break;
+    }
+
+    return value;
+  }
+
   /**
+   * Apply Settings
+   * @param {object} settings
+   * @private
+   */
+  _setSettings(settings) {
+    settings = this.constructor._fixSettings(settings);
+
+    // declare link to default settings
+    const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+    // extend user's settings with default settings
+    this._settings = merge({}, DEFAULT_SETTINGS, settings);
+
+    // apply each setting using setter
+    for (let key in DEFAULT_SETTINGS) {
+      if(DEFAULT_SETTINGS.hasOwnProperty(key)){
+        this[key] = settings[key];
+      }
+    }
+  }
+
+  /**
+   * Create container if it's need
+   * Or just append children for current element
+   * @private
+   */
+  _setContainer() {
+    // create container, if its undefined or not an Element
+    if (!(this.container instanceof HTMLElement)) {
+      if (typeof this.container === 'string') {
+        try {
+          // try to get element
+          this._settings.container = document.querySelector(this.container);
+          this.container.appendChild(this._rootElement);
+        } catch (e) {
+          throw new Error(e);
+        }
+      }
+    } else {
+      this.container.appendChild(this._rootElement);
+    }
+  }
+
+  /**
+   * Renderer tab's markup
    * @private
    */
   _render() {
+    // create container for tabs component
+    this._rootElement = document.createElement('div');
+    this._rootElement.className = TABS_CLASS;
+
     // draw shell for
     let tabListContainer = `<div class="${TABS_CONTAINER_CLASS}">
         <ul class="${TAB_LIST_CLASS}" role="tablist"></ul>
@@ -193,71 +355,22 @@ class CgTabs extends EventEmitter {
     this._tabListElement = tabListContainer.querySelector(`.${TAB_LIST_CLASS}`);
     this._panelListElement = panelListContainer.querySelector(`.${PANEL_LIST_CLASS}`);
 
-    for (let tab, i = 0; i < this.options.length; i++) {
-      tab = this.addTab(this.options[i]);
-
-      //todo: if tab will be added by component's user these events will not be added
-      // attach event, for switching between tabs
-      tab._element.addEventListener('keydown', e => {
-        let keyCode = e.which || e.keyCode;
-
-        switch (keyCode) {
-          // for previous tab
-          case KEY_CODE.ARROW.LEFT:
-          case KEY_CODE.ARROW.DOWN:
-            this.selectPrevTab();
-            this.tab.focus();
-            break;
-          // for next tab
-          case KEY_CODE.ARROW.RIGHT:
-          case KEY_CODE.ARROW.UP:
-            this.selectNextTab();
-            this.tab.focus();
-            break;
-          // switch to first tab
-          case KEY_CODE.HOME:
-            this.selectTab(0);
-            this.tab.focus();
-            break;
-          // switch to last tab
-          case KEY_CODE.END:
-            this.selectTab(this.tabs.length - 1);
-            this.tab.focus();
-            break;
-        }
-      });
-
-      // attach custom event for select tab's method
-      tab.on('select', this._updateCurrentTab.bind(this, tab));
-
-      tab.close();
-    }
-
     this._rootElement.appendChild(tabListContainer);
     this._rootElement.appendChild(panelListContainer);
   }
 
   /**
-   * Create container if it's need
-   * Or just append children for current element
+   * Create and add tabs into the tabs list
    * @private
    */
-  _defineContainer() {
-    //todo: container and _rootElement should be different elements. _rootElement should be appended to container. Container element must NOT be changed by this script.
-    this._rootElement = this.container;
-    //todo: also case when container have defined height is not provided (styles should be added)
+  _createTabs(){
+    let tab;
+    let i = 0;
 
-    //todo: handle case when this.container is element id
-    // create container, if its undefined or not an Element
-    if (!(this._rootElement instanceof HTMLElement)) {
-      //todo: native document.createElement('div'); will be better for this case
-      this._rootElement = utils.createHTML('<div></div>');
-
-      // redefine container one time
-      this.settings.container = this._rootElement;
+    for (this.tabs = []; i < this._settings.tabs.length; i++) {
+      tab = this.addTab(this._settings.tabs[i]);
+      tab.close();
     }
-
-    utils.addClass(this._rootElement, TABS_CLASS);
   }
 
   /**
@@ -267,7 +380,7 @@ class CgTabs extends EventEmitter {
   _init() {
     let index;
 
-    index = this.settings.selected;
+    index = this._settings.selected;
     index = index > this.tabs.length ? 0 : index;
 
     this.selectTab(index);
