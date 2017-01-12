@@ -43,5 +43,25 @@ export default {
     }
 
     return characters.join('');
+  },
+  /**
+   * Get sizes of the Element
+   * @param {element} element - element whose size you need to get
+   * @param {string} [prop] - which property return
+   * @return {object|number}
+   *
+   */
+  getClientRect: function(element, prop){
+    if(element instanceof HTMLElement){
+      // get sizes of the element and return needed value
+      let clientRect = element.getBoundingClientRect();
+
+      if(prop && prop in clientRect){
+        return clientRect[prop];
+      }
+
+      return clientRect;
+    }
   }
-};
+}
+;

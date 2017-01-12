@@ -48,6 +48,10 @@ class Tab extends EventEmitter {
     this._renderPanel();
   }
 
+  get width(){
+    return this._element.getBoundingClientRect().width;
+  }
+
   /**
    * Select tab
    */

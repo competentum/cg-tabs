@@ -5,6 +5,7 @@ import './common.less';
 
 import Tab from './tab';
 import EventEmitter from 'events';
+import Scroll from './scroll';
 import utils from 'cg-component-utils';
 import constants from './const';
 import merge from 'merge';
@@ -12,6 +13,7 @@ import merge from 'merge';
 const TABS_CLASS = constants.CLASSES.TABS_CLASS;
 const TABS_CONTAINER_CLASS = `${TABS_CLASS}__tab-list-container`;
 const PANELS_CONTAINER_CLASS = `${TABS_CLASS}__panel-list-container`;
+const TABS_CONTENT_CLASS = `${TABS_CLASS}__tab-list-content`;
 const TAB_LIST_CLASS = `${TABS_CLASS}__tab-list`;
 const PANEL_LIST_CLASS = `${TABS_CLASS}__panel-list`;
 
@@ -54,13 +56,15 @@ class CgTabs extends EventEmitter {
 
   /**
    * @property {string} SELECT - emit when user select one of the tabs
+   * @property {string} ADD - emit when the was created new tab
    * @returns {object}
    * @static
    */
   static get EVENTS() {
     if (!this._EVENTS) {
       this._EVENTS = {
-        SELECT: 'select'
+        SELECT: 'select',
+        ADD: 'add'
       };
     }
     return this._EVENTS;
@@ -72,8 +76,6 @@ class CgTabs extends EventEmitter {
    */
   constructor(settings) {
     super();
-
-    this.tabs = [];
 
     //todo: _applySettings
     this._render();
@@ -135,10 +137,10 @@ class CgTabs extends EventEmitter {
       if(position !== this.tabs.length){
         let reference = this.tabs[position];
 
-        this._tabListElement.insertBefore(tab._element, reference);
+        this._tabListContent.insertBefore(tab._element, reference);
       }
     } else {
-      this._tabListElement.appendChild(tab._element);
+      this._tabListContent.appendChild(tab._element);
     }
 
     this._panelListElement.appendChild(tab._panelElement);
@@ -176,6 +178,8 @@ class CgTabs extends EventEmitter {
           break;
       }
     });
+
+    this._updateTabList();
 
     return tab;
   }
@@ -343,7 +347,9 @@ class CgTabs extends EventEmitter {
 
     // draw shell for
     let tabListContainer = `<div class="${TABS_CONTAINER_CLASS}">
-        <ul class="${TAB_LIST_CLASS}" role="tablist"></ul>
+        <div class="${TAB_LIST_CLASS}">
+          <ul class="${TABS_CONTENT_CLASS}" role="tablist"></ul>
+        </div>
       </div>`;
     let panelListContainer = `<div class="${PANELS_CONTAINER_CLASS}">
         <div class="${PANEL_LIST_CLASS}"></div>
@@ -352,7 +358,9 @@ class CgTabs extends EventEmitter {
     tabListContainer = utils.createHTML(tabListContainer);
     panelListContainer = utils.createHTML(panelListContainer);
 
+    this._tabListContainer = tabListContainer;
     this._tabListElement = tabListContainer.querySelector(`.${TAB_LIST_CLASS}`);
+    this._tabListContent = tabListContainer.querySelector(`.${TABS_CONTENT_CLASS}`);
     this._panelListElement = panelListContainer.querySelector(`.${PANEL_LIST_CLASS}`);
 
     this._rootElement.appendChild(tabListContainer);
@@ -384,6 +392,44 @@ class CgTabs extends EventEmitter {
     index = index > this.tabs.length ? 0 : index;
 
     this.selectTab(index);
+  }
+
+  /**
+   * When numbers of the tabs more than container could contain in one line -
+   * we need to add useful arrows to make the tabs scrollable.
+   */
+  _updateTabList(){
+    // get tab list panel size
+    const tabListWidth = this._tabListContent.getBoundingClientRect().width;
+    const tabListContainerWidth = this._tabListContainer.getBoundingClientRect().width;
+    const diff = tabListContainerWidth - tabListWidth;
+
+    if(diff > 0){
+      if(!this.scrollable){
+        this.scrollable = true;
+        this.scroll = new Scroll(this._tabListElement);
+      }
+    }
+  }
+
+  /**
+   * Calculate the left tab position relative to the parent
+   * @param {Element} tab - tab's element
+   * @return {number}
+   * @private
+   */
+  _getTabLeft(tab){
+    let parent = tab.parentNode;
+    let scrollLeft = parent.parentNode.scrollLeft;
+    let parentLeft;
+    let itemLeft;
+
+    if(parent){
+      parentLeft = parent.getBoundingClientRect().left;
+      itemLeft = tab.getBoundingClientRect().left;
+
+      return itemLeft - parentLeft - scrollLeft;
+    }
   }
 }
 
