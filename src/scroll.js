@@ -7,15 +7,16 @@ class Scroll {
    * @param {Element} element
    */
   constructor(element){
-    this._referenceElement = element;
-    this._scrollableElement = element.children[0];
+    this._element = element;
+    this._content = element.children[0];
     this._parentElement = element.parentNode;
 
     this.controls = {};
-    this.step = 150;
 
     this._render();
-    this.update();
+    this._init();
+    this._updateControls();
+    this.enable();
   }
 
   /**
@@ -23,8 +24,8 @@ class Scroll {
    * @returns {*|number}
    */
   get max(){
-    let containerWidth = helpFuncs.getClientRect(this._referenceElement, 'width');
-    let elementWidth = helpFuncs.getClientRect(this._scrollableElement, 'width');
+    let containerWidth =  this.elementSize.width;
+    let elementWidth = this.contentSize.width;
 
     return Math.ceil(elementWidth - containerWidth);
   }
@@ -45,9 +46,9 @@ class Scroll {
     value = Math.max(value, this.min);
     value = Math.min(value, this.max);
 
-    this._referenceElement.scrollLeft = value;
+    this._element.scrollLeft = value;
 
-    this.update();
+    this._updateControls();
   }
 
   /**
@@ -55,7 +56,7 @@ class Scroll {
    * @returns {number}
    */
   get value(){
-    return this._referenceElement.scrollLeft;
+    return this._element.scrollLeft;
   }
 
   /**
@@ -74,12 +75,32 @@ class Scroll {
     return this._step;
   }
 
-  update(){
-    let leftDisplay = (this.value === this.min) ? 'none' : '';
-    let rightDisplay = (this.value === this.max) ? 'none' : '';
+  get elementSize(){
+    return helpFuncs.getClientRect(this._element);
+  }
 
-    this.controls.right.style.display = rightDisplay;
-    this.controls.left.style.display = leftDisplay;
+  get contentSize(){
+    return helpFuncs.getClientRect(this._content);
+  }
+
+  /**
+   * Disabled flag
+   * @param disable
+   */
+  set disabled(disable){
+    this._disabled = disable;
+  }
+
+  get disabled(){
+    return this._disabled;
+  }
+
+  /**
+   * show or hide arrows
+   */
+  _updateControls(){
+    this.controls.right.style.display = (this.value === this.max) ? 'none' : '';
+    this.controls.left.style.display = (this.value === this.min) ? 'none' : '';
   }
 
   /**
@@ -87,10 +108,50 @@ class Scroll {
    * @param {number} [value]
    */
   move(value){
-    value = value || this.step;
-    value = this.value + value;
+    this.value += (value || this.step);
+  }
 
-    this.value = value;
+  /**
+   * synchronize element scroll value and model value
+   */
+  update(){
+    // synchronize element scroll value and model value
+    this.value = this._element.scrollLeft;
+  }
+
+  /**
+   *
+   */
+  enable(){
+    if(this.disabled){
+      utils.addClass(this._parentElement, 'scrollable');
+
+      this._updateControls();
+    }
+  }
+
+  /**
+   * disable scroll functionality
+   */
+  disable(){
+    if(this.disabled) return;
+
+    utils.removeClass(this._parentElement, 'scrollable');
+
+    // hide arrows
+    this.controls.right.style.display = 'none';
+    this.controls.left.style.display = 'none';
+  }
+
+  /**
+   * set initial app state
+   * @private
+   */
+  _init(){
+    this.step = this.elementSize.width / 2;
+    this.disabled = false;
+
+    this._element.addEventListener('scroll', this.update.bind(this));
   }
 
   /**

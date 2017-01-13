@@ -71,13 +71,58 @@ class CgTabs extends EventEmitter {
   }
 
   /**
+   *
+   * @param container
+   * @returns {Element}
+   * @private
+   */
+  static _fixContainer(container){
+    if(container instanceof HTMLElement){
+      return container;
+    }
+
+    if(typeof container === 'string'){
+      let element = document.querySelector(container);
+
+      if(element !== null){
+        return element;
+      }
+    }
+
+  }
+
+  static _fixSetting(name, value) {
+    const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+    switch (name) {
+      // field 'selected' should be a number
+      case 'selected':
+        if (isNaN(value)) {
+          value = DEFAULT_SETTINGS[name];
+        }
+        break;
+    }
+
+    return value;
+  }
+
+  static _fixSettings(settings) {
+    for (let name in settings) {
+      if (settings.hasOwnProperty(name)) {
+        settings[name] = this._fixSetting(name, settings[name]);
+      }
+    }
+
+    return settings;
+  }
+
+  /**
    * @param {Object} [settings] - user's settings. extends with default settings
    * @constructor
    */
   constructor(settings) {
     super();
 
-    //todo: _applySettings
     this._render();
     this._setSettings(settings);
     this._createTabs();
@@ -86,28 +131,30 @@ class CgTabs extends EventEmitter {
 
   /**
    * The main container
-   * @returns {element}
    */
   get container() {
     return this._settings.container;
   }
 
   /**
-   * Getter for the main container
-   * @param {string|element} container
-   * @description placed current component's node into the new container
+   * Placed current component's node into the new container
+   * @param {*} value
    */
-  set container(container) {
-    this._settings.container = container;
-    this._setContainer();
+  set container(value) {
+    let fixed = this.constructor._fixContainer(value);
+
+    if(typeof fixed !== 'undefined'){
+      this._settings.container = fixed;
+      this._settings.container.appendChild(this._rootElement);
+    }
   }
 
   /**
    * Setter for selecting tab
    * @param {number} value
    */
-  set selected(value){
-    if(value == undefined) return;
+  set selected(value) {
+    if (value == undefined) return;
 
     this._settings.selected = value;
     this.selectTab(value);
@@ -117,11 +164,10 @@ class CgTabs extends EventEmitter {
    * Getter for selecting tab
    * @returns {number}
    */
-  get selected(){
+  get selected() {
     return this._settings.selected;
   }
 
-  //todo: add possibility to add tab in any place, not only at the end.
   /**
    * add Tab element to current state
    * @param {Object} [options]
@@ -133,8 +179,8 @@ class CgTabs extends EventEmitter {
     // write and append new tab on the page
     this.tabs.push(tab);
 
-    if(typeof position === 'number'){
-      if(position !== this.tabs.length){
+    if (typeof position === 'number') {
+      if (position !== this.tabs.length) {
         let reference = this.tabs[position];
 
         this._tabListContent.insertBefore(tab._element, reference);
@@ -224,15 +270,13 @@ class CgTabs extends EventEmitter {
     }
   }
 
-  //todo: add removing tab by index
-  //todo: type Object -> Tab
   /**
    * Remove tab from tabs list
    * @param {Tab|Number} tab - tab or tab's index to be removed
    */
   removeTab(tab) {
-    if(typeof tab === 'number'){
-      if(this.tabs[tab] !== undefined){
+    if (typeof tab === 'number') {
+      if (this.tabs[tab] !== undefined) {
         this.tabs[tab].remove();
         this.tabs.splice(1, tab);
       }
@@ -267,31 +311,6 @@ class CgTabs extends EventEmitter {
     this.tab = tab;
   }
 
-  static _fixSettings(settings) {
-    for (let name in settings) {
-      if (settings.hasOwnProperty(name)) {
-        settings[name] = this._fixSetting(name, settings[name]);
-      }
-    }
-
-    return settings;
-  }
-
-  static _fixSetting(name, value) {
-    const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
-
-    switch (name) {
-      // field 'selected' should be a number
-      case 'selected':
-        if (isNaN(value)) {
-          value = DEFAULT_SETTINGS[name];
-        }
-        break;
-    }
-
-    return value;
-  }
-
   /**
    * Apply Settings
    * @param {object} settings
@@ -308,31 +327,9 @@ class CgTabs extends EventEmitter {
 
     // apply each setting using setter
     for (let key in DEFAULT_SETTINGS) {
-      if(DEFAULT_SETTINGS.hasOwnProperty(key)){
+      if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
         this[key] = settings[key];
       }
-    }
-  }
-
-  /**
-   * Create container if it's need
-   * Or just append children for current element
-   * @private
-   */
-  _setContainer() {
-    // create container, if its undefined or not an Element
-    if (!(this.container instanceof HTMLElement)) {
-      if (typeof this.container === 'string') {
-        try {
-          // try to get element
-          this._settings.container = document.querySelector(this.container);
-          this.container.appendChild(this._rootElement);
-        } catch (e) {
-          throw new Error(e);
-        }
-      }
-    } else {
-      this.container.appendChild(this._rootElement);
     }
   }
 
@@ -371,7 +368,7 @@ class CgTabs extends EventEmitter {
    * Create and add tabs into the tabs list
    * @private
    */
-  _createTabs(){
+  _createTabs() {
     let tab;
     let i = 0;
 
@@ -396,39 +393,23 @@ class CgTabs extends EventEmitter {
 
   /**
    * When numbers of the tabs more than container could contain in one line -
-   * we need to add useful arrows to make the tabs scrollable.
+   * need to add useful arrows to make the tabs scrollable.
    */
-  _updateTabList(){
+  _updateTabList() {
     // get tab list panel size
-    const tabListWidth = this._tabListContent.getBoundingClientRect().width;
-    const tabListContainerWidth = this._tabListContainer.getBoundingClientRect().width;
-    const diff = tabListContainerWidth - tabListWidth;
+    const contentWidth = this._tabListContent.getBoundingClientRect().width;
+    const containerWidth = this._tabListContainer.getBoundingClientRect().width;
+    const diff = contentWidth - containerWidth;
 
-    if(diff > 0){
-      if(!this.scrollable){
-        this.scrollable = true;
+    if (diff > 0) {
+      if (!this.scroll) {
         this.scroll = new Scroll(this._tabListElement);
       }
-    }
-  }
-
-  /**
-   * Calculate the left tab position relative to the parent
-   * @param {Element} tab - tab's element
-   * @return {number}
-   * @private
-   */
-  _getTabLeft(tab){
-    let parent = tab.parentNode;
-    let scrollLeft = parent.parentNode.scrollLeft;
-    let parentLeft;
-    let itemLeft;
-
-    if(parent){
-      parentLeft = parent.getBoundingClientRect().left;
-      itemLeft = tab.getBoundingClientRect().left;
-
-      return itemLeft - parentLeft - scrollLeft;
+      this.scroll.enable();
+    } else {
+      if (this.scroll) {
+        this.scroll.disable();
+      }
     }
   }
 }
