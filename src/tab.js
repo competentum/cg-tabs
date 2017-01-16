@@ -9,8 +9,6 @@ const TAB_CLASS = `${TABS_CLASS}__tab`;
 const TAB_SELECT_CLASS = `${TAB_CLASS}--select`;
 const PANEL_CLASS = `${TABS_CLASS}__panel`;
 
-//todo: describe options type
-
 class Tab extends EventEmitter {
 
   /**
@@ -30,15 +28,19 @@ class Tab extends EventEmitter {
     return this._DEFAULT_SETTINGS;
   }
 
+  static get EVENTS() {
+    if (!this._EVENTS) {
+      this._EVENTS = {
+        REMOVE: 'remove',
+        SELECT: 'select'
+      };
+    }
+
+    return this._EVENTS;
+  }
+
   constructor(settings) {
     super();
-
-    //todo: Do settings property need for something? It seems redundant
-    // merge default settings and users settings; set links for settings
-    this.settings = merge.recursive(true, this.constructor.DEFAULT_SETTINGS, settings);
-    //todo: add setters
-    this.title = this.settings.title;
-    this.content = this.settings.content;
 
     // define identifiers
     this.id = helpFuncs.generateId();
@@ -46,10 +48,45 @@ class Tab extends EventEmitter {
 
     this._render();
     this._renderPanel();
+    this._applySettings(settings);
   }
 
-  get width(){
+  get width() {
     return this._element.getBoundingClientRect().width;
+  }
+
+  /**
+   * Setter tab's title
+   * @param {string} value
+   */
+  set title(value) {
+    this._title = value;
+    this._applyTitle();
+  }
+
+  /**
+   * Getter tab's string
+   * @returns {string}
+   */
+  get title() {
+    return this._title;
+  }
+
+  /**
+   * Setter panel's content
+   * @param {element|string} value
+   */
+  set content(value) {
+    this._content = value;
+    this._applyContent();
+  }
+
+  /**
+   * Getter panel's content
+   * @returns {element|string}
+   */
+  get content() {
+    return this._content;
   }
 
   /**
@@ -59,7 +96,7 @@ class Tab extends EventEmitter {
     if (this.selected) return;
 
     // call listeners for select event
-    this.emit('select');
+    this.emit(this.constructor.EVENTS.SELECT);
 
     // set wai aria attributes
     this._element.setAttribute('tabindex', 0);
@@ -94,7 +131,7 @@ class Tab extends EventEmitter {
   /**
    * set focus on tab element
    */
-  focus(){
+  focus() {
     this._element.focus();
   }
 
@@ -102,6 +139,9 @@ class Tab extends EventEmitter {
    * remove tab element from DOM
    */
   remove() {
+    // emits attached events
+    this.emit(this.constructor.EVENTS.REMOVE);
+
     let tabParent = this._element.parentNode;
     let panelParent = this._panelElement.parentNode;
 
@@ -128,22 +168,32 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * Render markup for tab
-   * @param {String|Element} title - tab's title
+   *
+   * @param {object} settings
    * @private
    */
-  _render() {
+  _applySettings(settings) {
+    // declare link to default settings
+    const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+    // extend user's settings with default settings
+    this._settings = merge({}, DEFAULT_SETTINGS, settings);
+
+    // apply each setting using setter
+    for (let key in DEFAULT_SETTINGS) {
+      if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
+        this[key] = settings[key];
+      }
+    }
+  }
+
+  /**
+   * Update current title
+   * @private
+   */
+  _applyTitle() {
     // get type of title
     let type = typeof this.title;
-
-    // create wrapper for tab
-    this._element = utils.createHTML(`<li class='${TAB_CLASS}'></li>`);
-    this._element.addEventListener('click', this.select.bind(this));
-
-    // add attributes for wai aria support
-    this._element.id = this.id;
-    this._element.setAttribute('role', 'tab');
-    this._element.setAttribute('aria-controls', this.panelId);
 
     if (type === 'string') {
       // try to find element on the page and append that
@@ -161,6 +211,42 @@ class Tab extends EventEmitter {
   }
 
   /**
+   * Update current panel's content
+   * @private
+   */
+  _applyContent() {
+    if (this.content instanceof HTMLElement) {
+      this._panelElement.appendChild(this.content);
+    } else if (typeof this.content === 'string') {
+      let child;
+
+      try {
+        // try to get element
+        child = document.querySelector(this.content);
+        this._panelElement.appendChild(child);
+      } catch (e) {
+        this._panelElement.innerHTML = this.content;
+      }
+    }
+  }
+
+  /**
+   * Render markup for tab
+   * @param {String|Element} title - tab's title
+   * @private
+   */
+  _render() {
+    // create wrapper for tab
+    this._element = utils.createHTML(`<li class='${TAB_CLASS}'></li>`);
+    this._element.addEventListener('click', this.select.bind(this));
+
+    // add attributes for wai aria support
+    this._element.id = this.id;
+    this._element.setAttribute('role', 'tab');
+    this._element.setAttribute('aria-controls', this.panelId);
+  }
+
+  /**
    * Render markup for tab's panel
    * @param {String|Element} content
    * @private
@@ -174,24 +260,6 @@ class Tab extends EventEmitter {
     this._panelElement.id = this.panelId;
     this._panelElement.setAttribute('role', 'tabpanel');
     this._panelElement.setAttribute('aria-labelledby', this.id);
-
-    if (this.content instanceof HTMLElement) {
-      this._panelElement.appendChild(this.content);
-
-      return;
-    }
-
-    if (typeof this.content === 'string') {
-      let child;
-
-      try {
-        // try to get element
-        child = document.querySelector(this.content);
-        this._panelElement.appendChild(child);
-      } catch (e) {
-        this._panelElement.innerHTML = this.content;
-      }
-    }
   }
 }
 

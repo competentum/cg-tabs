@@ -46,7 +46,7 @@ export default {
   },
   /**
    * Get sizes of the Element
-   * @param {element} element - element whose size you need to get
+   * @param {Element} element - element whose size you need to get
    * @param {string} [prop] - which property return
    * @return {object|number}
    *

@@ -63,8 +63,7 @@ class CgTabs extends EventEmitter {
   static get EVENTS() {
     if (!this._EVENTS) {
       this._EVENTS = {
-        SELECT: 'select',
-        ADD: 'add'
+        SELECT: 'select'
       };
     }
     return this._EVENTS;
@@ -176,25 +175,32 @@ class CgTabs extends EventEmitter {
   addTab(options, position) {
     let tab = new Tab(options);
 
-    // write and append new tab on the page
-    this.tabs.push(tab);
-
     if (typeof position === 'number') {
       if (position !== this.tabs.length) {
-        let reference = this.tabs[position];
+        let reference = this.tabs[position]._element;
+
+        // place element to the desired position of the array
+        this.tabs.splice(position, 0, tab);
+
+        // increment selected index
+        this._settings.selected++;
 
         this._tabListContent.insertBefore(tab._element, reference);
       }
     } else {
       this._tabListContent.appendChild(tab._element);
+
+      // write and append new tab on the page
+      this.tabs.push(tab);
     }
 
     this._panelListElement.appendChild(tab._panelElement);
 
-    // attach custom event for select tab's method
+    // attach custom events
     tab.on('select', this._updateCurrentTab.bind(this, tab));
+    tab.on('remove', this._updateSelectedTab.bind(this, tab));
+    tab.on('remove', this._updateScrollState.bind(this));
 
-    //todo: if tab will be added by component's user these events will not be added
     // attach event, for switching between tabs
     tab._element.addEventListener('keydown', e => {
       let keyCode = e.which || e.keyCode;
@@ -225,7 +231,9 @@ class CgTabs extends EventEmitter {
       }
     });
 
-    this._updateTabList();
+    tab.close();
+
+    this._updateScrollState();
 
     return tab;
   }
@@ -241,7 +249,7 @@ class CgTabs extends EventEmitter {
     index = index >= (this.tabs.length - 1) ? 0 : ++index;
 
     nextTab = this.tabs[index];
-    nextTab.select();
+    nextTab && nextTab.select();
   }
 
   /**
@@ -277,8 +285,8 @@ class CgTabs extends EventEmitter {
   removeTab(tab) {
     if (typeof tab === 'number') {
       if (this.tabs[tab] !== undefined) {
+        this.tabs.splice(tab, 1);
         this.tabs[tab].remove();
-        this.tabs.splice(1, tab);
       }
 
       return;
@@ -309,6 +317,7 @@ class CgTabs extends EventEmitter {
 
     this.tab.close();
     this.tab = tab;
+    this._settings.selected = this.tabs.indexOf(tab);
   }
 
   /**
@@ -392,10 +401,28 @@ class CgTabs extends EventEmitter {
   }
 
   /**
+   * If selected tab was removed, select another tab instead
+   * @param {Tab} tab
+   * @private
+   */
+  _updateSelectedTab(tab){
+    let index = this.tabs.indexOf(tab);
+
+    if(index > -1){
+      this.tabs.splice(index, 1);
+
+      if(this.selected === index){
+        this.selectNextTab();
+      }
+    }
+  }
+
+  /**
    * When numbers of the tabs more than container could contain in one line -
    * need to add useful arrows to make the tabs scrollable.
+   * @private
    */
-  _updateTabList() {
+  _updateScrollState() {
     // get tab list panel size
     const contentWidth = this._tabListContent.getBoundingClientRect().width;
     const containerWidth = this._tabListContainer.getBoundingClientRect().width;
