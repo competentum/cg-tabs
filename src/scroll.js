@@ -155,7 +155,7 @@ class Scroll {
   }
 
   /**
-   * Render html markup
+   * Render html mockup
    * @returns {{}|*}
    * @private
    */

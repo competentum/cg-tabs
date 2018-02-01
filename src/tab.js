@@ -5,9 +5,9 @@ import constants from './const';
 import merge from 'merge';
 
 const TABS_CLASS = constants.CLASSES.TABS_CLASS;
-const TAB_CLASS = `${TABS_CLASS}__tab`;
-const TAB_SELECT_CLASS = `${TAB_CLASS}--select`;
-const PANEL_CLASS = `${TABS_CLASS}__panel`;
+const TAB_CLASS = `${TABS_CLASS}-tab`;
+const TAB_SELECT_CLASS = `${TAB_CLASS}-select`;
+const PANEL_CLASS = `${TABS_CLASS}-panel`;
 
 class Tab extends EventEmitter {
 
@@ -47,7 +47,7 @@ class Tab extends EventEmitter {
     this.panelId = helpFuncs.generateId();
 
     this._render();
-    this._renderPanel();
+    this._renderTabPanel();
     this._applySettings(settings);
   }
 
@@ -99,7 +99,7 @@ class Tab extends EventEmitter {
     this.emit(this.constructor.EVENTS.SELECT);
 
     // set wai aria attributes
-    this._element.setAttribute('tabindex', 0);
+    this._element.setAttribute('tabindex', '0');
     this._element.setAttribute('aria-selected', 'true');
 
     // add selected class
@@ -116,7 +116,7 @@ class Tab extends EventEmitter {
    */
   close() {
     // set wai aria attributes
-    this._element.setAttribute('tabindex', -1);
+    this._element.setAttribute('tabindex', '-1');
     this._element.setAttribute('aria-selected', 'false');
 
     // remove selected class
@@ -129,14 +129,14 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * set focus on tab element
+   * Set focus to tab element
    */
   focus() {
     this._element.focus();
   }
 
   /**
-   * remove tab element from DOM
+   * Remove tab element from DOM
    */
   remove() {
     // emits attached events
@@ -152,7 +152,7 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * Hiding panel associated with this tab
+   * Hide panel associated with this tab
    */
   hidePanel() {
     this._panelElement.style.display = 'none';
@@ -160,7 +160,7 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * Showing panel associated with this tab
+   * Show panel associated with this tab
    */
   showPanel() {
     this._panelElement.style.display = '';
@@ -231,8 +231,7 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * Render markup for tab
-   * @param {String|Element} title - tab's title
+   * Render mockup for tab
    * @private
    */
   _render() {
@@ -247,14 +246,12 @@ class Tab extends EventEmitter {
   }
 
   /**
-   * Render markup for tab's panel
-   * @param {String|Element} content
+   * Render mockup for tab panel
    * @private
    */
-  _renderPanel() {
+  _renderTabPanel() {
     // create wrapper for tab
-    this._panelElement =
-      utils.createHTML(`<div class='${PANEL_CLASS}'></div>`);
+    this._panelElement = utils.createHTML(`<div class='${PANEL_CLASS}'></div>`);
 
     // add attributes for wai aria support
     this._panelElement.id = this.panelId;
@@ -263,4 +260,4 @@ class Tab extends EventEmitter {
   }
 }
 
-module.exports = Tab;
+export default Tab;

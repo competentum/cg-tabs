@@ -16,23 +16,23 @@
   box-shadow: 0 10px 10px #ddd;
   font-family: "Roboto", sans-serif;
 }
-.@{prefix}__tab-list-container,
-.@{prefix}__panel-list-container {
+.@{prefix}-tab-list-container,
+.@{prefix}-panel-list-container {
   position: relative;
   width: 100%;
 }
-.@{prefix}__tab-list-container.scrollable ul {
+.@{prefix}-tab-list-container.scrollable ul {
   padding: 0 @tab-height;
 }
-.@{prefix}__panel-list-container {
+.@{prefix}-panel-list-container {
   overflow: auto;
   height: ~'calc(100% - ' @tab-height ~')';
 }
-.@{prefix}__tab-list {
+.@{prefix}-tab-list {
   overflow: hidden;
   background: @tab-color;
 }
-ul.@{prefix}__tab-list-content {
+ul.@{prefix}-tab-list-content {
   display: inline-block;
   position: relative;
   margin: 0;
@@ -42,7 +42,7 @@ ul.@{prefix}__tab-list-content {
   white-space: nowrap;
   height: @tab-height;
 }
-li.@{prefix}__tab {
+li.@{prefix}-tab {
   height: 100%;
   position: relative;
   display: inline-block;
@@ -81,7 +81,7 @@ li.@{prefix}__tab {
     }
   }
 }
-li.@{prefix}__tab.is-mouse-focused {
+li.@{prefix}-tab.is-mouse-focused {
   &:focus {
     outline: none;
 
@@ -90,7 +90,7 @@ li.@{prefix}__tab.is-mouse-focused {
     }
   }
 }
-li.@{prefix}__tab--select {
+li.@{prefix}-tab-select {
   &::before {
     content: "";
     position: absolute;
@@ -101,7 +101,7 @@ li.@{prefix}__tab--select {
     background: #fff;
   }
 }
-.@{prefix}__panel-list {
+.@{prefix}-panel-list {
   padding: 20px;
   background: @bg-color;
   min-height: 100%;

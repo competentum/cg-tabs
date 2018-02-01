@@ -1,7 +1,7 @@
 'use strict';
 
 import './common.less';
-//import 'mouse-focused';
+import 'mouse-focused';
 
 import Tab from './tab';
 import EventEmitter from 'events';
@@ -11,11 +11,11 @@ import constants from './const';
 import merge from 'merge';
 
 const TABS_CLASS = constants.CLASSES.TABS_CLASS;
-const TABS_CONTAINER_CLASS = `${TABS_CLASS}__tab-list-container`;
-const PANELS_CONTAINER_CLASS = `${TABS_CLASS}__panel-list-container`;
-const TABS_CONTENT_CLASS = `${TABS_CLASS}__tab-list-content`;
-const TAB_LIST_CLASS = `${TABS_CLASS}__tab-list`;
-const PANEL_LIST_CLASS = `${TABS_CLASS}__panel-list`;
+const TABS_CONTAINER_CLASS = `${TABS_CLASS}-tab-list-container`;
+const PANELS_CONTAINER_CLASS = `${TABS_CLASS}-panel-list-container`;
+const TABS_CONTENT_CLASS = `${TABS_CLASS}-tab-list-content`;
+const TAB_LIST_CLASS = `${TABS_CLASS}-tab-list`;
+const PANEL_LIST_CLASS = `${TABS_CLASS}-panel-list`;
 
 const KEY_CODE = {
   ARROW: {
@@ -28,14 +28,23 @@ const KEY_CODE = {
   END: 35
 };
 
+
+/**
+ * Tabs's customizing settings
+ * @typedef {Object} TabsSettings
+ * @property {Element|string} container - DOM Element or element id in which slider instance should be rendered.
+ *                                        This property can be omitted. In this case new DOM element will be created and can be accessed via `tabsInstance.container`
+ * @property {number} selected - selected tab
+ */
+
 class CgTabs extends EventEmitter {
   /**
    * Default tab navigation's settings
-   * @property {string|element} container - container where will be placed tabs
+   * @property {string|element} container - container where will be placed tabs (element or selector)
    * @property {number}         selected - index first selected tab
    * @property {array}          tabs - tabs list
-   * @property {string}         options[].title - title for tab
-   * @property {element|string} options[].content - content for panel list
+   * @property {string}         tabs[].title - title for tab
+   * @property {element|string} tabs[].content - content for tab panel
    * @returns {object}
    */
   static get DEFAULT_SETTINGS() {
@@ -56,7 +65,6 @@ class CgTabs extends EventEmitter {
 
   /**
    * @property {string} SELECT - emit when user select one of the tabs
-   * @property {string} ADD - emit when the was created new tab
    * @returns {object}
    * @static
    */
@@ -70,24 +78,23 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   *
+   * Get element of container
    * @param container
    * @returns {Element}
    * @private
    */
-  static _fixContainer(container){
-    if(container instanceof HTMLElement){
+  static _fixContainer(container) {
+    if (container instanceof HTMLElement) {
       return container;
     }
 
-    if(typeof container === 'string'){
+    if (typeof container === 'string') {
       let element = document.querySelector(container);
 
-      if(element !== null){
+      if (element !== null) {
         return element;
       }
     }
-
   }
 
   static _fixSetting(name, value) {
@@ -116,16 +123,17 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   * @param {Object} [settings] - user's settings. extends with default settings
+   * @param {Object} settings - user's settings extend default settings
    * @constructor
    */
   constructor(settings) {
     super();
 
     this._render();
-    this._setSettings(settings);
+    this._applySettings(settings);
     this._createTabs();
-    this._init();
+
+    this.selectTab(this.selected);
   }
 
   /**
@@ -140,10 +148,10 @@ class CgTabs extends EventEmitter {
    * @param {*} value
    */
   set container(value) {
-    let fixed = this.constructor._fixContainer(value);
+    const container = this.constructor._fixContainer(value);
 
-    if(typeof fixed !== 'undefined'){
-      this._settings.container = fixed;
+    if (typeof container !== 'undefined') {
+      this._settings.container = container;
       this._settings.container.appendChild(this._rootElement);
     }
   }
@@ -153,7 +161,15 @@ class CgTabs extends EventEmitter {
    * @param {number} value
    */
   set selected(value) {
-    if (value == undefined) return;
+    value = +value;
+
+    if (isNaN(value)) { // must be a number
+      return;
+    }
+
+    // check that value is between first and last tabs
+    value = value > this.tabs.length - 1 ? 0 : value;
+    value = value < 0 ? this.tabs.length - 1 : value;
 
     this._settings.selected = value;
     this.selectTab(value);
@@ -210,25 +226,23 @@ class CgTabs extends EventEmitter {
         case KEY_CODE.ARROW.LEFT:
         case KEY_CODE.ARROW.DOWN:
           this.selectPrevTab();
-          this.tab.focus();
           break;
         // for next tab
         case KEY_CODE.ARROW.RIGHT:
         case KEY_CODE.ARROW.UP:
           this.selectNextTab();
-          this.tab.focus();
           break;
         // switch to first tab
         case KEY_CODE.HOME:
           this.selectTab(0);
-          this.tab.focus();
           break;
         // switch to last tab
         case KEY_CODE.END:
           this.selectTab(this.tabs.length - 1);
-          this.tab.focus();
           break;
       }
+
+      this.tab.focus();
     });
 
     tab.close();
@@ -242,33 +256,19 @@ class CgTabs extends EventEmitter {
    * Select next tab from tabs list
    */
   selectNextTab() {
-    let index, nextTab;
-
-    // get index of current tab and select next tab
-    index = this.tabs.indexOf(this.tab);
-    index = index >= (this.tabs.length - 1) ? 0 : ++index;
-
-    nextTab = this.tabs[index];
-    nextTab && nextTab.select();
+    this.selected++;
   }
 
   /**
    * Select previous tab from tabs list
    */
   selectPrevTab() {
-    let index, prevTab;
-
-    // get index of current tab and select next tab
-    index = this.tabs.indexOf(this.tab);
-    index = index <= 0 ? (this.tabs.length - 1) : --index;
-
-    prevTab = this.tabs[index];
-    prevTab.select();
+    this.selected--;
   }
 
   /**
    * Select tab from index
-   * @param {Number} index - number from 0 to the number of tabs
+   * @param {Number} index - number from 0 to the number of tabs - 1
    */
   selectTab(index) {
     let tab = this.tabs[index];
@@ -292,11 +292,11 @@ class CgTabs extends EventEmitter {
       return;
     }
 
-    // get tab position from list
-    let position = this.tabs.indexOf(tab);
+    // get tab index from list
+    let index = this.tabs.indexOf(tab);
 
-    if (position > -1) {
-      this.tabs.splice(1, position);
+    if (index > -1) {
+      this.tabs.splice(index, 1);
 
       tab.remove();
     }
@@ -309,29 +309,26 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _updateCurrentTab(tab) {
-    if (this.tab === undefined) {
-      this.tab = tab;
-
-      return;
+    if (this.tab) {
+      this.tab.close();
     }
 
-    this.tab.close();
     this.tab = tab;
     this._settings.selected = this.tabs.indexOf(tab);
   }
 
   /**
-   * Apply Settings
-   * @param {object} settings
+   * Apply settings on initialization
+   * @param {Object} settings
    * @private
    */
-  _setSettings(settings) {
+  _applySettings(settings) {
     settings = this.constructor._fixSettings(settings);
 
-    // declare link to default settings
     const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
 
     // extend user's settings with default settings
+    /** @type TabsSettings */
     this._settings = merge({}, DEFAULT_SETTINGS, settings);
 
     // apply each setting using setter
@@ -343,7 +340,7 @@ class CgTabs extends EventEmitter {
   }
 
   /**
-   * Renderer tab's markup
+   * Renderer tab's mockup
    * @private
    */
   _render() {
@@ -352,17 +349,18 @@ class CgTabs extends EventEmitter {
     this._rootElement.className = TABS_CLASS;
 
     // draw shell for
-    let tabListContainer = `<div class="${TABS_CONTAINER_CLASS}">
+    const tabListContainer = utils.createHTML(`
+      <div class="${TABS_CONTAINER_CLASS}">
         <div class="${TAB_LIST_CLASS}">
           <ul class="${TABS_CONTENT_CLASS}" role="tablist"></ul>
         </div>
-      </div>`;
-    let panelListContainer = `<div class="${PANELS_CONTAINER_CLASS}">
+      </div>
+    `);
+    const panelListContainer = utils.createHTML(`
+      <div class="${PANELS_CONTAINER_CLASS}">
         <div class="${PANEL_LIST_CLASS}"></div>
-      </div>`;
-
-    tabListContainer = utils.createHTML(tabListContainer);
-    panelListContainer = utils.createHTML(panelListContainer);
+      </div>
+    `);
 
     this._tabListContainer = tabListContainer;
     this._tabListElement = tabListContainer.querySelector(`.${TAB_LIST_CLASS}`);
@@ -378,26 +376,11 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _createTabs() {
-    let tab;
-    let i = 0;
+    this.tabs = [];
 
-    for (this.tabs = []; i < this._settings.tabs.length; i++) {
-      tab = this.addTab(this._settings.tabs[i]);
-      tab.close();
-    }
-  }
-
-  /**
-   * Initialize state of component
-   * @private
-   */
-  _init() {
-    let index;
-
-    index = this._settings.selected;
-    index = index > this.tabs.length ? 0 : index;
-
-    this.selectTab(index);
+    this._settings.tabs.forEach((tab) => {
+      this.addTab(tab);
+    });
   }
 
   /**
@@ -405,13 +388,13 @@ class CgTabs extends EventEmitter {
    * @param {Tab} tab
    * @private
    */
-  _updateSelectedTab(tab){
+  _updateSelectedTab(tab) {
     let index = this.tabs.indexOf(tab);
 
-    if(index > -1){
+    if (index > -1) {
       this.tabs.splice(index, 1);
 
-      if(this.selected === index){
+      if (this.selected === index) {
         this.selectNextTab();
       }
     }
