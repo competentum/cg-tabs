@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>Accessible Tabs Example</title>
   <script type="text/javascript" src="cg-tabs.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700i,700" rel="stylesheet">
   <style>
     #container {
-      width: 600px;
-      height: 350px;
+      width: 700px;
       margin: 20px auto;
+    }
+
+    body {
+      font: 16px Roboto, sans-serif;
+    }
+
+    p {
+      line-height: 26px;
     }
   </style>
 </head>
@@ -42,7 +50,7 @@
   </div>
   <div class="panel">
     <p>
-      Here we are fetching an image across the network and inserting it into an <img> element. The simplest use of
+      Here we are fetching an image across the network and inserting it into an image element. The simplest use of
       fetch() takes one argument — the path to the resource you want to fetch — and returns a promise containing the
       response (a Response object).
     </p>

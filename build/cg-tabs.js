@@ -1,7 +1,7 @@
 /*!
  * cg-tabs v0.0.1 - Accessibility Tabs Component
  * 
- * (c) 2015-2017 Competentum Group | http://competentum.com
+ * (c) 2015-2018 Competentum Group | http://competentum.com
  * Released under the MIT license
  * https://opensource.org/licenses/mit-license.php
  */
@@ -14,140 +14,2498 @@
 		exports["CgTabs"] = factory();
 	else
 		root["CgTabs"] = factory();
-})(this, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-
+/******/ 		module.l = true;
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	eval("module.exports = __webpack_require__(1);\n\n\n//////////////////\n// WEBPACK FOOTER\n// multi cg-tabs\n// module id = 0\n// module chunks = 0\n//# sourceURL=webpack:///multi_cg-tabs?");
+"use strict";
 
-/***/ },
+
+__webpack_require__(14);
+
+module.exports = {
+
+  /**
+   *
+   * @param {Element} element
+   * @param {string} className
+   */
+  addClass: function addClass(element, className) {
+    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
+    if (re.test(element.className)) return;
+    element.className = (element.className + ' ' + className).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+  },
+
+  /**
+   *
+   * @param {Element} element
+   * @param {string} className
+   * @returns {boolean}
+   */
+  hasClass: function (element, className) {
+    return element.matches('.' + className);
+  },
+
+  /**
+   *
+   * @param {Element} element
+   * @param {string} className
+   */
+  removeClass: function removeClass(element, className) {
+    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
+    element.className = element.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+  },
+
+  /**
+   * Removes current node from tree.
+   * @param {Node} node
+   */
+  removeNode: function removeNode(node) {
+    if (node.parentNode)
+      node.parentNode.removeChild(node);
+  },
+
+  /**
+   *
+   * @param {string} html
+   * @returns {Node}
+   */
+  createHTML: function createHTML(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html.trim();
+    return div.firstChild;
+  },
+
+  /**
+   * Adds coordinates to event object independently of event from touching or mouse. (cx, cy - client coordinates, px, py - page coordinates)
+   * @param event
+   */
+  extendEventObject: function extendEventObject(event) {
+    if (event.touches && event.touches[0]) {
+      event.cx = event.touches[0].clientX;
+      event.cy = event.touches[0].clientY;
+      event.px = event.touches[0].pageX;
+      event.py = event.touches[0].pageY;
+    }
+    else if (event.changedTouches && event.changedTouches[0]) {
+      event.cx = event.changedTouches[0].clientX;
+      event.cy = event.changedTouches[0].clientY;
+      event.px = event.changedTouches[0].pageX;
+      event.py = event.changedTouches[0].pageY;
+    }
+    else {
+      event.cx = event.clientX;
+      event.cy = event.clientY;
+      event.px = event.pageX;
+      event.py = event.pageY;
+    }
+  }
+};
+
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-	eval("'use strict';\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\n__webpack_require__(2);\n\nvar _tab = __webpack_require__(6);\n\nvar _tab2 = _interopRequireDefault(_tab);\n\nvar _events = __webpack_require__(7);\n\nvar _events2 = _interopRequireDefault(_events);\n\nvar _scroll = __webpack_require__(14);\n\nvar _scroll2 = _interopRequireDefault(_scroll);\n\nvar _cgComponentUtils = __webpack_require__(8);\n\nvar _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);\n\nvar _const = __webpack_require__(11);\n\nvar _const2 = _interopRequireDefault(_const);\n\nvar _merge = __webpack_require__(12);\n\nvar _merge2 = _interopRequireDefault(_merge);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n//import 'mouse-focused';\n\nvar TABS_CLASS = _const2.default.CLASSES.TABS_CLASS;\nvar TABS_CONTAINER_CLASS = TABS_CLASS + '__tab-list-container';\nvar PANELS_CONTAINER_CLASS = TABS_CLASS + '__panel-list-container';\nvar TABS_CONTENT_CLASS = TABS_CLASS + '__tab-list-content';\nvar TAB_LIST_CLASS = TABS_CLASS + '__tab-list';\nvar PANEL_LIST_CLASS = TABS_CLASS + '__panel-list';\n\nvar KEY_CODE = {\n  ARROW: {\n    LEFT: 37,\n    RIGHT: 39,\n    UP: 38,\n    DOWN: 40\n  },\n  HOME: 36,\n  END: 35\n};\n\nvar CgTabs = function (_EventEmitter) {\n  _inherits(CgTabs, _EventEmitter);\n\n  _createClass(CgTabs, null, [{\n    key: '_fixContainer',\n\n\n    /**\r\n     *\r\n     * @param container\r\n     * @returns {Element}\r\n     * @private\r\n     */\n    value: function _fixContainer(container) {\n      if (container instanceof HTMLElement) {\n        return container;\n      }\n\n      if (typeof container === 'string') {\n        var element = document.querySelector(container);\n\n        if (element !== null) {\n          return element;\n        }\n      }\n    }\n  }, {\n    key: '_fixSetting',\n    value: function _fixSetting(name, value) {\n      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;\n\n      switch (name) {\n        // field 'selected' should be a number\n        case 'selected':\n          if (isNaN(value)) {\n            value = DEFAULT_SETTINGS[name];\n          }\n          break;\n      }\n\n      return value;\n    }\n  }, {\n    key: '_fixSettings',\n    value: function _fixSettings(settings) {\n      for (var name in settings) {\n        if (settings.hasOwnProperty(name)) {\n          settings[name] = this._fixSetting(name, settings[name]);\n        }\n      }\n\n      return settings;\n    }\n\n    /**\r\n     * @param {Object} [settings] - user's settings. extends with default settings\r\n     * @constructor\r\n     */\n\n  }, {\n    key: 'DEFAULT_SETTINGS',\n\n    /**\r\n     * Default tab navigation's settings\r\n     * @property {string|element} container - container where will be placed tabs\r\n     * @property {number}         selected - index first selected tab\r\n     * @property {array}          tabs - tabs list\r\n     * @property {string}         options[].title - title for tab\r\n     * @property {element|string} options[].content - content for panel list\r\n     * @returns {object}\r\n     */\n    get: function get() {\n      if (!this._DEFAULT_SETTINGS) {\n        this._DEFAULT_SETTINGS = {\n          selected: 0,\n          container: document.body,\n          tabs: [{\n            title: 'Sample',\n            content: 'Example Text'\n          }]\n        };\n      }\n      return this._DEFAULT_SETTINGS;\n    }\n\n    /**\r\n     * @property {string} SELECT - emit when user select one of the tabs\r\n     * @property {string} ADD - emit when the was created new tab\r\n     * @returns {object}\r\n     * @static\r\n     */\n\n  }, {\n    key: 'EVENTS',\n    get: function get() {\n      if (!this._EVENTS) {\n        this._EVENTS = {\n          SELECT: 'select'\n        };\n      }\n      return this._EVENTS;\n    }\n  }]);\n\n  function CgTabs(settings) {\n    _classCallCheck(this, CgTabs);\n\n    var _this = _possibleConstructorReturn(this, (CgTabs.__proto__ || Object.getPrototypeOf(CgTabs)).call(this));\n\n    _this._render();\n    _this._setSettings(settings);\n    _this._createTabs();\n    _this._init();\n    return _this;\n  }\n\n  /**\r\n   * The main container\r\n   */\n\n\n  _createClass(CgTabs, [{\n    key: 'addTab',\n\n\n    /**\r\n     * add Tab element to current state\r\n     * @param {Object} [options]\r\n     * @param {Number} [position]\r\n     */\n    value: function addTab(options, position) {\n      var _this2 = this;\n\n      var tab = new _tab2.default(options);\n\n      if (typeof position === 'number') {\n        if (position !== this.tabs.length) {\n          var reference = this.tabs[position]._element;\n\n          this.tabs.splice(position, 0, tab);\n          this._settings.selected++;\n\n          this._tabListContent.insertBefore(tab._element, reference);\n        }\n      } else {\n        this._tabListContent.appendChild(tab._element);\n\n        // write and append new tab on the page\n        this.tabs.push(tab);\n      }\n\n      this._panelListElement.appendChild(tab._panelElement);\n\n      // attach custom events\n      tab.on('select', this._updateCurrentTab.bind(this, tab));\n      tab.on('remove', this._updateSelectedTab.bind(this, tab));\n      tab.on('remove', this._updateScrollState.bind(this));\n\n      // attach event, for switching between tabs\n      tab._element.addEventListener('keydown', function (e) {\n        var keyCode = e.which || e.keyCode;\n\n        switch (keyCode) {\n          // for previous tab\n          case KEY_CODE.ARROW.LEFT:\n          case KEY_CODE.ARROW.DOWN:\n            _this2.selectPrevTab();\n            _this2.tab.focus();\n            break;\n          // for next tab\n          case KEY_CODE.ARROW.RIGHT:\n          case KEY_CODE.ARROW.UP:\n            _this2.selectNextTab();\n            _this2.tab.focus();\n            break;\n          // switch to first tab\n          case KEY_CODE.HOME:\n            _this2.selectTab(0);\n            _this2.tab.focus();\n            break;\n          // switch to last tab\n          case KEY_CODE.END:\n            _this2.selectTab(_this2.tabs.length - 1);\n            _this2.tab.focus();\n            break;\n        }\n      });\n\n      tab.close();\n\n      this._updateScrollState();\n\n      return tab;\n    }\n\n    /**\r\n     * Select next tab from tabs list\r\n     */\n\n  }, {\n    key: 'selectNextTab',\n    value: function selectNextTab() {\n      var index = void 0,\n          nextTab = void 0;\n\n      // get index of current tab and select next tab\n      index = this.tabs.indexOf(this.tab);\n      index = index >= this.tabs.length - 1 ? 0 : ++index;\n\n      nextTab = this.tabs[index];\n      nextTab && nextTab.select();\n    }\n\n    /**\r\n     * Select previous tab from tabs list\r\n     */\n\n  }, {\n    key: 'selectPrevTab',\n    value: function selectPrevTab() {\n      var index = void 0,\n          prevTab = void 0;\n\n      // get index of current tab and select next tab\n      index = this.tabs.indexOf(this.tab);\n      index = index <= 0 ? this.tabs.length - 1 : --index;\n\n      prevTab = this.tabs[index];\n      prevTab.select();\n    }\n\n    /**\r\n     * Select tab from index\r\n     * @param {Number} index - number from 0 to the number of tabs\r\n     */\n\n  }, {\n    key: 'selectTab',\n    value: function selectTab(index) {\n      var tab = this.tabs[index];\n\n      if (typeof tab !== 'undefined') {\n        tab.select();\n      }\n    }\n\n    /**\r\n     * Remove tab from tabs list\r\n     * @param {Tab|Number} tab - tab or tab's index to be removed\r\n     */\n\n  }, {\n    key: 'removeTab',\n    value: function removeTab(tab) {\n      if (typeof tab === 'number') {\n        if (this.tabs[tab] !== undefined) {\n          this.tabs.splice(tab, 1);\n          this.tabs[tab].remove();\n        }\n\n        return;\n      }\n\n      // get tab position from list\n      var position = this.tabs.indexOf(tab);\n\n      if (position > -1) {\n        this.tabs.splice(1, position);\n\n        tab.remove();\n      }\n    }\n\n    /**\r\n     * Close current and save selected tab\r\n     * This method calls only after call Tab's method \"select\"\r\n     * @param {Tab} tab\r\n     * @private\r\n     */\n\n  }, {\n    key: '_updateCurrentTab',\n    value: function _updateCurrentTab(tab) {\n      if (this.tab === undefined) {\n        this.tab = tab;\n\n        return;\n      }\n\n      this.tab.close();\n      this.tab = tab;\n      this._settings.selected = this.tabs.indexOf(tab);\n    }\n\n    /**\r\n     * Apply Settings\r\n     * @param {object} settings\r\n     * @private\r\n     */\n\n  }, {\n    key: '_setSettings',\n    value: function _setSettings(settings) {\n      settings = this.constructor._fixSettings(settings);\n\n      // declare link to default settings\n      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;\n\n      // extend user's settings with default settings\n      this._settings = (0, _merge2.default)({}, DEFAULT_SETTINGS, settings);\n\n      // apply each setting using setter\n      for (var key in DEFAULT_SETTINGS) {\n        if (DEFAULT_SETTINGS.hasOwnProperty(key)) {\n          this[key] = settings[key];\n        }\n      }\n    }\n\n    /**\r\n     * Renderer tab's markup\r\n     * @private\r\n     */\n\n  }, {\n    key: '_render',\n    value: function _render() {\n      // create container for tabs component\n      this._rootElement = document.createElement('div');\n      this._rootElement.className = TABS_CLASS;\n\n      // draw shell for\n      var tabListContainer = '<div class=\"' + TABS_CONTAINER_CLASS + '\">\\n        <div class=\"' + TAB_LIST_CLASS + '\">\\n          <ul class=\"' + TABS_CONTENT_CLASS + '\" role=\"tablist\"></ul>\\n        </div>\\n      </div>';\n      var panelListContainer = '<div class=\"' + PANELS_CONTAINER_CLASS + '\">\\n        <div class=\"' + PANEL_LIST_CLASS + '\"></div>\\n      </div>';\n\n      tabListContainer = _cgComponentUtils2.default.createHTML(tabListContainer);\n      panelListContainer = _cgComponentUtils2.default.createHTML(panelListContainer);\n\n      this._tabListContainer = tabListContainer;\n      this._tabListElement = tabListContainer.querySelector('.' + TAB_LIST_CLASS);\n      this._tabListContent = tabListContainer.querySelector('.' + TABS_CONTENT_CLASS);\n      this._panelListElement = panelListContainer.querySelector('.' + PANEL_LIST_CLASS);\n\n      this._rootElement.appendChild(tabListContainer);\n      this._rootElement.appendChild(panelListContainer);\n    }\n\n    /**\r\n     * Create and add tabs into the tabs list\r\n     * @private\r\n     */\n\n  }, {\n    key: '_createTabs',\n    value: function _createTabs() {\n      var tab = void 0;\n      var i = 0;\n\n      for (this.tabs = []; i < this._settings.tabs.length; i++) {\n        tab = this.addTab(this._settings.tabs[i]);\n        tab.close();\n      }\n    }\n\n    /**\r\n     * Initialize state of component\r\n     * @private\r\n     */\n\n  }, {\n    key: '_init',\n    value: function _init() {\n      var index = void 0;\n\n      index = this._settings.selected;\n      index = index > this.tabs.length ? 0 : index;\n\n      this.selectTab(index);\n    }\n\n    /**\r\n     * If selected tab was removed, select another tab instead\r\n     * @param {Tab} tab\r\n     * @private\r\n     */\n\n  }, {\n    key: '_updateSelectedTab',\n    value: function _updateSelectedTab(tab) {\n      var index = this.tabs.indexOf(tab);\n\n      if (index > -1) {\n        this.tabs.splice(index, 1);\n\n        if (this.selected === index) {\n          this.selectNextTab();\n        }\n      }\n    }\n\n    /**\r\n     * When numbers of the tabs more than container could contain in one line -\r\n     * need to add useful arrows to make the tabs scrollable.\r\n     * @private\r\n     */\n\n  }, {\n    key: '_updateScrollState',\n    value: function _updateScrollState() {\n      // get tab list panel size\n      var contentWidth = this._tabListContent.getBoundingClientRect().width;\n      var containerWidth = this._tabListContainer.getBoundingClientRect().width;\n      var diff = contentWidth - containerWidth;\n\n      if (diff > 0) {\n        if (!this.scroll) {\n          this.scroll = new _scroll2.default(this._tabListElement);\n        }\n        this.scroll.enable();\n      } else {\n        if (this.scroll) {\n          this.scroll.disable();\n        }\n      }\n    }\n  }, {\n    key: 'container',\n    get: function get() {\n      return this._settings.container;\n    }\n\n    /**\r\n     * Placed current component's node into the new container\r\n     * @param {*} value\r\n     */\n    ,\n    set: function set(value) {\n      var fixed = this.constructor._fixContainer(value);\n\n      if (typeof fixed !== 'undefined') {\n        this._settings.container = fixed;\n        this._settings.container.appendChild(this._rootElement);\n      }\n    }\n\n    /**\r\n     * Setter for selecting tab\r\n     * @param {number} value\r\n     */\n\n  }, {\n    key: 'selected',\n    set: function set(value) {\n      if (value == undefined) return;\n\n      this._settings.selected = value;\n      this.selectTab(value);\n    }\n\n    /**\r\n     * Getter for selecting tab\r\n     * @returns {number}\r\n     */\n    ,\n    get: function get() {\n      return this._settings.selected;\n    }\n  }]);\n\n  return CgTabs;\n}(_events2.default);\n\nmodule.exports = CgTabs;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/index.js\n// module id = 1\n// module chunks = 0\n//# sourceURL=webpack:///./src/index.js?");
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/***/ },
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(3);\nif(typeof content === 'string') content = [[module.id, content, '']];\n// add the styles to the DOM\nvar update = __webpack_require__(5)(content, {});\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/less-loader/index.js!./common.less\", function() {\n\t\t\tvar newContent = require(\"!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/less-loader/index.js!./common.less\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/common.less\n// module id = 2\n// module chunks = 0\n//# sourceURL=webpack:///./src/common.less?");
+"use strict";
 
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
 
-	eval("exports = module.exports = __webpack_require__(4)();\n// imports\nexports.push([module.id, \"@import url(https://fonts.googleapis.com/css?family=Roboto);\", \"\"]);\n\n// module\nexports.push([module.id, \".cg-tabs * {\\n  margin: 0;\\n  padding: 0;\\n}\\n.cg-tabs {\\n  position: relative;\\n  width: 100%;\\n  height: 100%;\\n  box-shadow: 0 10px 10px #ddd;\\n  font-family: \\\"Roboto\\\", sans-serif;\\n}\\n.cg-tabs__tab-list-container,\\n.cg-tabs__panel-list-container {\\n  position: relative;\\n  width: 100%;\\n}\\n.cg-tabs__tab-list-container.scrollable ul {\\n  padding: 0 40px;\\n}\\n.cg-tabs__panel-list-container {\\n  overflow: auto;\\n  height: calc(100% -  40px );\\n}\\n.cg-tabs__tab-list {\\n  overflow: hidden;\\n  background: #06ae60;\\n}\\nul.cg-tabs__tab-list-content {\\n  display: inline-block;\\n  position: relative;\\n  margin: 0;\\n  padding: 0;\\n  background: #06ae60;\\n  text-align: left;\\n  white-space: nowrap;\\n  height: 40px;\\n}\\nli.cg-tabs__tab {\\n  height: 100%;\\n  position: relative;\\n  display: inline-block;\\n  background: #06ae60;\\n  line-height: 40px;\\n  padding: 0 20px;\\n  color: #fff;\\n  cursor: pointer;\\n  -webkit-user-select: none;\\n     -moz-user-select: none;\\n      -ms-user-select: none;\\n          user-select: none;\\n}\\nli.cg-tabs__tab:hover::before {\\n  content: \\\"\\\";\\n  position: absolute;\\n  width: 100%;\\n  height: 3px;\\n  bottom: 0;\\n  left: 0;\\n  background: #fff;\\n}\\nli.cg-tabs__tab:focus {\\n  outline: none;\\n}\\nli.cg-tabs__tab:focus::after {\\n  content: \\\"\\\";\\n  position: absolute;\\n  width: 100%;\\n  height: 100%;\\n  top: 0;\\n  left: 0;\\n  box-sizing: border-box;\\n  border: 1px dashed #fff;\\n  border-top: none;\\n}\\nli.cg-tabs__tab.is-mouse-focused:focus {\\n  outline: none;\\n}\\nli.cg-tabs__tab.is-mouse-focused:focus::after {\\n  display: none;\\n}\\nli.cg-tabs__tab--select::before {\\n  content: \\\"\\\";\\n  position: absolute;\\n  width: 100%;\\n  height: 3px;\\n  bottom: 0;\\n  left: 0;\\n  background: #fff;\\n}\\n.cg-tabs__panel-list {\\n  padding: 20px;\\n  background: #f3f3f3;\\n  min-height: 100%;\\n  box-sizing: border-box;\\n}\\n/* Styles for scrollable parts */\\n.arrow {\\n  width: 40px;\\n  height: 40px;\\n  position: absolute;\\n  vertical-align: middle;\\n  line-height: 40px;\\n  text-align: center;\\n  background: #06ae60;\\n  cursor: pointer;\\n  top: 0;\\n}\\n.arrow.left {\\n  left: 0;\\n}\\n.arrow.left span {\\n  display: inline-block;\\n  width: 15px;\\n  height: 15px;\\n  vertical-align: middle;\\n  border-left: 2px solid #fff;\\n  border-bottom: 2px solid #fff;\\n  transform: rotate(45deg);\\n  position: relative;\\n  left: 5px;\\n}\\n.arrow.right {\\n  right: 0;\\n}\\n.arrow.right span {\\n  display: inline-block;\\n  width: 15px;\\n  height: 15px;\\n  vertical-align: middle;\\n  border-right: 2px solid #fff;\\n  border-bottom: 2px solid #fff;\\n  transform: rotate(-45deg);\\n  position: relative;\\n  right: 5px;\\n}\\n\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./~/postcss-loader!./~/less-loader!./src/common.less\n// module id = 3\n// module chunks = 0\n//# sourceURL=webpack:///./src/common.less?./~/css-loader!./~/postcss-loader!./~/less-loader");
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	eval("/*\r\n\tMIT License http://www.opensource.org/licenses/mit-license.php\r\n\tAuthor Tobias Koppers @sokra\r\n*/\r\n// css base code, injected by the css-loader\r\nmodule.exports = function() {\r\n\tvar list = [];\r\n\r\n\t// return the list of modules as css string\r\n\tlist.toString = function toString() {\r\n\t\tvar result = [];\r\n\t\tfor(var i = 0; i < this.length; i++) {\r\n\t\t\tvar item = this[i];\r\n\t\t\tif(item[2]) {\r\n\t\t\t\tresult.push(\"@media \" + item[2] + \"{\" + item[1] + \"}\");\r\n\t\t\t} else {\r\n\t\t\t\tresult.push(item[1]);\r\n\t\t\t}\r\n\t\t}\r\n\t\treturn result.join(\"\");\r\n\t};\r\n\r\n\t// import a list of modules into the list\r\n\tlist.i = function(modules, mediaQuery) {\r\n\t\tif(typeof modules === \"string\")\r\n\t\t\tmodules = [[null, modules, \"\"]];\r\n\t\tvar alreadyImportedModules = {};\r\n\t\tfor(var i = 0; i < this.length; i++) {\r\n\t\t\tvar id = this[i][0];\r\n\t\t\tif(typeof id === \"number\")\r\n\t\t\t\talreadyImportedModules[id] = true;\r\n\t\t}\r\n\t\tfor(i = 0; i < modules.length; i++) {\r\n\t\t\tvar item = modules[i];\r\n\t\t\t// skip already imported module\r\n\t\t\t// this implementation is not 100% perfect for weird media query combinations\r\n\t\t\t//  when a module is imported multiple times with different media queries.\r\n\t\t\t//  I hope this will never occur (Hey this way we have smaller bundles)\r\n\t\t\tif(typeof item[0] !== \"number\" || !alreadyImportedModules[item[0]]) {\r\n\t\t\t\tif(mediaQuery && !item[2]) {\r\n\t\t\t\t\titem[2] = mediaQuery;\r\n\t\t\t\t} else if(mediaQuery) {\r\n\t\t\t\t\titem[2] = \"(\" + item[2] + \") and (\" + mediaQuery + \")\";\r\n\t\t\t\t}\r\n\t\t\t\tlist.push(item);\r\n\t\t\t}\r\n\t\t}\r\n\t};\r\n\treturn list;\r\n};\r\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader/lib/css-base.js\n// module id = 4\n// module chunks = 0\n//# sourceURL=webpack:///./~/css-loader/lib/css-base.js?");
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	eval("/*\r\n\tMIT License http://www.opensource.org/licenses/mit-license.php\r\n\tAuthor Tobias Koppers @sokra\r\n*/\r\nvar stylesInDom = {},\r\n\tmemoize = function(fn) {\r\n\t\tvar memo;\r\n\t\treturn function () {\r\n\t\t\tif (typeof memo === \"undefined\") memo = fn.apply(this, arguments);\r\n\t\t\treturn memo;\r\n\t\t};\r\n\t},\r\n\tisOldIE = memoize(function() {\r\n\t\treturn /msie [6-9]\\b/.test(window.navigator.userAgent.toLowerCase());\r\n\t}),\r\n\tgetHeadElement = memoize(function () {\r\n\t\treturn document.head || document.getElementsByTagName(\"head\")[0];\r\n\t}),\r\n\tsingletonElement = null,\r\n\tsingletonCounter = 0,\r\n\tstyleElementsInsertedAtTop = [];\r\n\r\nmodule.exports = function(list, options) {\r\n\tif(false) {\r\n\t\tif(typeof document !== \"object\") throw new Error(\"The style-loader cannot be used in a non-browser environment\");\r\n\t}\r\n\r\n\toptions = options || {};\r\n\t// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>\r\n\t// tags it will allow on a page\r\n\tif (typeof options.singleton === \"undefined\") options.singleton = isOldIE();\r\n\r\n\t// By default, add <style> tags to the bottom of <head>.\r\n\tif (typeof options.insertAt === \"undefined\") options.insertAt = \"bottom\";\r\n\r\n\tvar styles = listToStyles(list);\r\n\taddStylesToDom(styles, options);\r\n\r\n\treturn function update(newList) {\r\n\t\tvar mayRemove = [];\r\n\t\tfor(var i = 0; i < styles.length; i++) {\r\n\t\t\tvar item = styles[i];\r\n\t\t\tvar domStyle = stylesInDom[item.id];\r\n\t\t\tdomStyle.refs--;\r\n\t\t\tmayRemove.push(domStyle);\r\n\t\t}\r\n\t\tif(newList) {\r\n\t\t\tvar newStyles = listToStyles(newList);\r\n\t\t\taddStylesToDom(newStyles, options);\r\n\t\t}\r\n\t\tfor(var i = 0; i < mayRemove.length; i++) {\r\n\t\t\tvar domStyle = mayRemove[i];\r\n\t\t\tif(domStyle.refs === 0) {\r\n\t\t\t\tfor(var j = 0; j < domStyle.parts.length; j++)\r\n\t\t\t\t\tdomStyle.parts[j]();\r\n\t\t\t\tdelete stylesInDom[domStyle.id];\r\n\t\t\t}\r\n\t\t}\r\n\t};\r\n}\r\n\r\nfunction addStylesToDom(styles, options) {\r\n\tfor(var i = 0; i < styles.length; i++) {\r\n\t\tvar item = styles[i];\r\n\t\tvar domStyle = stylesInDom[item.id];\r\n\t\tif(domStyle) {\r\n\t\t\tdomStyle.refs++;\r\n\t\t\tfor(var j = 0; j < domStyle.parts.length; j++) {\r\n\t\t\t\tdomStyle.parts[j](item.parts[j]);\r\n\t\t\t}\r\n\t\t\tfor(; j < item.parts.length; j++) {\r\n\t\t\t\tdomStyle.parts.push(addStyle(item.parts[j], options));\r\n\t\t\t}\r\n\t\t} else {\r\n\t\t\tvar parts = [];\r\n\t\t\tfor(var j = 0; j < item.parts.length; j++) {\r\n\t\t\t\tparts.push(addStyle(item.parts[j], options));\r\n\t\t\t}\r\n\t\t\tstylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};\r\n\t\t}\r\n\t}\r\n}\r\n\r\nfunction listToStyles(list) {\r\n\tvar styles = [];\r\n\tvar newStyles = {};\r\n\tfor(var i = 0; i < list.length; i++) {\r\n\t\tvar item = list[i];\r\n\t\tvar id = item[0];\r\n\t\tvar css = item[1];\r\n\t\tvar media = item[2];\r\n\t\tvar sourceMap = item[3];\r\n\t\tvar part = {css: css, media: media, sourceMap: sourceMap};\r\n\t\tif(!newStyles[id])\r\n\t\t\tstyles.push(newStyles[id] = {id: id, parts: [part]});\r\n\t\telse\r\n\t\t\tnewStyles[id].parts.push(part);\r\n\t}\r\n\treturn styles;\r\n}\r\n\r\nfunction insertStyleElement(options, styleElement) {\r\n\tvar head = getHeadElement();\r\n\tvar lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];\r\n\tif (options.insertAt === \"top\") {\r\n\t\tif(!lastStyleElementInsertedAtTop) {\r\n\t\t\thead.insertBefore(styleElement, head.firstChild);\r\n\t\t} else if(lastStyleElementInsertedAtTop.nextSibling) {\r\n\t\t\thead.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);\r\n\t\t} else {\r\n\t\t\thead.appendChild(styleElement);\r\n\t\t}\r\n\t\tstyleElementsInsertedAtTop.push(styleElement);\r\n\t} else if (options.insertAt === \"bottom\") {\r\n\t\thead.appendChild(styleElement);\r\n\t} else {\r\n\t\tthrow new Error(\"Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.\");\r\n\t}\r\n}\r\n\r\nfunction removeStyleElement(styleElement) {\r\n\tstyleElement.parentNode.removeChild(styleElement);\r\n\tvar idx = styleElementsInsertedAtTop.indexOf(styleElement);\r\n\tif(idx >= 0) {\r\n\t\tstyleElementsInsertedAtTop.splice(idx, 1);\r\n\t}\r\n}\r\n\r\nfunction createStyleElement(options) {\r\n\tvar styleElement = document.createElement(\"style\");\r\n\tstyleElement.type = \"text/css\";\r\n\tinsertStyleElement(options, styleElement);\r\n\treturn styleElement;\r\n}\r\n\r\nfunction createLinkElement(options) {\r\n\tvar linkElement = document.createElement(\"link\");\r\n\tlinkElement.rel = \"stylesheet\";\r\n\tinsertStyleElement(options, linkElement);\r\n\treturn linkElement;\r\n}\r\n\r\nfunction addStyle(obj, options) {\r\n\tvar styleElement, update, remove;\r\n\r\n\tif (options.singleton) {\r\n\t\tvar styleIndex = singletonCounter++;\r\n\t\tstyleElement = singletonElement || (singletonElement = createStyleElement(options));\r\n\t\tupdate = applyToSingletonTag.bind(null, styleElement, styleIndex, false);\r\n\t\tremove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);\r\n\t} else if(obj.sourceMap &&\r\n\t\ttypeof URL === \"function\" &&\r\n\t\ttypeof URL.createObjectURL === \"function\" &&\r\n\t\ttypeof URL.revokeObjectURL === \"function\" &&\r\n\t\ttypeof Blob === \"function\" &&\r\n\t\ttypeof btoa === \"function\") {\r\n\t\tstyleElement = createLinkElement(options);\r\n\t\tupdate = updateLink.bind(null, styleElement);\r\n\t\tremove = function() {\r\n\t\t\tremoveStyleElement(styleElement);\r\n\t\t\tif(styleElement.href)\r\n\t\t\t\tURL.revokeObjectURL(styleElement.href);\r\n\t\t};\r\n\t} else {\r\n\t\tstyleElement = createStyleElement(options);\r\n\t\tupdate = applyToTag.bind(null, styleElement);\r\n\t\tremove = function() {\r\n\t\t\tremoveStyleElement(styleElement);\r\n\t\t};\r\n\t}\r\n\r\n\tupdate(obj);\r\n\r\n\treturn function updateStyle(newObj) {\r\n\t\tif(newObj) {\r\n\t\t\tif(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)\r\n\t\t\t\treturn;\r\n\t\t\tupdate(obj = newObj);\r\n\t\t} else {\r\n\t\t\tremove();\r\n\t\t}\r\n\t};\r\n}\r\n\r\nvar replaceText = (function () {\r\n\tvar textStore = [];\r\n\r\n\treturn function (index, replacement) {\r\n\t\ttextStore[index] = replacement;\r\n\t\treturn textStore.filter(Boolean).join('\\n');\r\n\t};\r\n})();\r\n\r\nfunction applyToSingletonTag(styleElement, index, remove, obj) {\r\n\tvar css = remove ? \"\" : obj.css;\r\n\r\n\tif (styleElement.styleSheet) {\r\n\t\tstyleElement.styleSheet.cssText = replaceText(index, css);\r\n\t} else {\r\n\t\tvar cssNode = document.createTextNode(css);\r\n\t\tvar childNodes = styleElement.childNodes;\r\n\t\tif (childNodes[index]) styleElement.removeChild(childNodes[index]);\r\n\t\tif (childNodes.length) {\r\n\t\t\tstyleElement.insertBefore(cssNode, childNodes[index]);\r\n\t\t} else {\r\n\t\t\tstyleElement.appendChild(cssNode);\r\n\t\t}\r\n\t}\r\n}\r\n\r\nfunction applyToTag(styleElement, obj) {\r\n\tvar css = obj.css;\r\n\tvar media = obj.media;\r\n\r\n\tif(media) {\r\n\t\tstyleElement.setAttribute(\"media\", media)\r\n\t}\r\n\r\n\tif(styleElement.styleSheet) {\r\n\t\tstyleElement.styleSheet.cssText = css;\r\n\t} else {\r\n\t\twhile(styleElement.firstChild) {\r\n\t\t\tstyleElement.removeChild(styleElement.firstChild);\r\n\t\t}\r\n\t\tstyleElement.appendChild(document.createTextNode(css));\r\n\t}\r\n}\r\n\r\nfunction updateLink(linkElement, obj) {\r\n\tvar css = obj.css;\r\n\tvar sourceMap = obj.sourceMap;\r\n\r\n\tif(sourceMap) {\r\n\t\t// http://stackoverflow.com/a/26603875\r\n\t\tcss += \"\\n/*# sourceMappingURL=data:application/json;base64,\" + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + \" */\";\r\n\t}\r\n\r\n\tvar blob = new Blob([css], { type: \"text/css\" });\r\n\r\n\tvar oldSrc = linkElement.href;\r\n\r\n\tlinkElement.href = URL.createObjectURL(blob);\r\n\r\n\tif(oldSrc)\r\n\t\tURL.revokeObjectURL(oldSrc);\r\n}\r\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/style-loader/addStyles.js\n// module id = 5\n// module chunks = 0\n//# sourceURL=webpack:///./~/style-loader/addStyles.js?");
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	eval("'use strict';\n\nvar _typeof = typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; };\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _events = __webpack_require__(7);\n\nvar _events2 = _interopRequireDefault(_events);\n\nvar _cgComponentUtils = __webpack_require__(8);\n\nvar _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);\n\nvar _helpFuncs = __webpack_require__(10);\n\nvar _helpFuncs2 = _interopRequireDefault(_helpFuncs);\n\nvar _const = __webpack_require__(11);\n\nvar _const2 = _interopRequireDefault(_const);\n\nvar _merge = __webpack_require__(12);\n\nvar _merge2 = _interopRequireDefault(_merge);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nvar TABS_CLASS = _const2.default.CLASSES.TABS_CLASS;\nvar TAB_CLASS = TABS_CLASS + '__tab';\nvar TAB_SELECT_CLASS = TAB_CLASS + '--select';\nvar PANEL_CLASS = TABS_CLASS + '__panel';\n\nvar Tab = function (_EventEmitter) {\n  _inherits(Tab, _EventEmitter);\n\n  _createClass(Tab, null, [{\n    key: 'DEFAULT_SETTINGS',\n\n\n    /**\r\n     * Tab's settings\r\n     * @property {element|string} title - tab's title\r\n     * @property {element|string} content\r\n     * @returns {Object}\r\n     * @static\r\n     */\n    get: function get() {\n      if (!this._DEFAULT_SETTINGS) {\n        this._DEFAULT_SETTINGS = {\n          title: 'Tab',\n          content: 'Example text'\n        };\n      }\n      return this._DEFAULT_SETTINGS;\n    }\n  }, {\n    key: 'EVENTS',\n    get: function get() {\n      if (!this._EVENTS) {\n        this._EVENTS = {\n          REMOVE: 'remove',\n          SELECT: 'select'\n        };\n      }\n\n      return this._EVENTS;\n    }\n  }]);\n\n  function Tab(settings) {\n    _classCallCheck(this, Tab);\n\n    // define identifiers\n    var _this = _possibleConstructorReturn(this, (Tab.__proto__ || Object.getPrototypeOf(Tab)).call(this));\n\n    _this.id = _helpFuncs2.default.generateId();\n    _this.panelId = _helpFuncs2.default.generateId();\n\n    _this._render();\n    _this._renderPanel();\n    _this._applySettings(settings);\n    return _this;\n  }\n\n  _createClass(Tab, [{\n    key: 'select',\n\n\n    /**\r\n     * Select tab\r\n     */\n    value: function select() {\n      if (this.selected) return;\n\n      // call listeners for select event\n      this.emit(this.constructor.EVENTS.SELECT);\n\n      // set wai aria attributes\n      this._element.setAttribute('tabindex', 0);\n      this._element.setAttribute('aria-selected', 'true');\n\n      // add selected class\n      _cgComponentUtils2.default.addClass(this._element, TAB_SELECT_CLASS);\n\n      // show panel associated with this tab\n      this.showPanel();\n\n      this.selected = true;\n    }\n\n    /**\r\n     * Close tab\r\n     */\n\n  }, {\n    key: 'close',\n    value: function close() {\n      // set wai aria attributes\n      this._element.setAttribute('tabindex', -1);\n      this._element.setAttribute('aria-selected', 'false');\n\n      // remove selected class\n      _cgComponentUtils2.default.removeClass(this._element, TAB_SELECT_CLASS);\n\n      // hide panel associated with this tab\n      this.hidePanel();\n\n      this.selected = false;\n    }\n\n    /**\r\n     * set focus on tab element\r\n     */\n\n  }, {\n    key: 'focus',\n    value: function focus() {\n      this._element.focus();\n    }\n\n    /**\r\n     * remove tab element from DOM\r\n     */\n\n  }, {\n    key: 'remove',\n    value: function remove() {\n      // emits attached events\n      this.emit(this.constructor.EVENTS.REMOVE);\n\n      var tabParent = this._element.parentNode;\n      var panelParent = this._panelElement.parentNode;\n\n      if (tabParent && panelParent) {\n        tabParent.removeChild(this._element);\n        panelParent.removeChild(this._panelElement);\n      }\n    }\n\n    /**\r\n     * Hiding panel associated with this tab\r\n     */\n\n  }, {\n    key: 'hidePanel',\n    value: function hidePanel() {\n      this._panelElement.style.display = 'none';\n      this._panelElement.setAttribute('aria-hidden', 'true');\n    }\n\n    /**\r\n     * Showing panel associated with this tab\r\n     */\n\n  }, {\n    key: 'showPanel',\n    value: function showPanel() {\n      this._panelElement.style.display = '';\n      this._panelElement.setAttribute('aria-hidden', 'false');\n    }\n\n    /**\r\n     *\r\n     * @param {object} settings\r\n     * @private\r\n     */\n\n  }, {\n    key: '_applySettings',\n    value: function _applySettings(settings) {\n      // declare link to default settings\n      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;\n\n      // extend user's settings with default settings\n      this._settings = (0, _merge2.default)({}, DEFAULT_SETTINGS, settings);\n\n      // apply each setting using setter\n      for (var key in DEFAULT_SETTINGS) {\n        if (DEFAULT_SETTINGS.hasOwnProperty(key)) {\n          this[key] = settings[key];\n        }\n      }\n    }\n\n    /**\r\n     * Update current title\r\n     * @private\r\n     */\n\n  }, {\n    key: '_applyTitle',\n    value: function _applyTitle() {\n      // get type of title\n      var type = _typeof(this.title);\n\n      if (type === 'string') {\n        // try to find element on the page and append that\n        // else just inner this string into an element\n        try {\n          var child = document.querySelector(this.title);\n          this._element.appendChild(child);\n        } catch (e) {\n          this._element.innerHTML = this.title;\n        }\n      } else {\n        throw new Error(this.title + '. Your type - ' + type + '. title must be a String.');\n      }\n    }\n\n    /**\r\n     * Update current panel's content\r\n     * @private\r\n     */\n\n  }, {\n    key: '_applyContent',\n    value: function _applyContent() {\n      if (this.content instanceof HTMLElement) {\n        this._panelElement.appendChild(this.content);\n      } else if (typeof this.content === 'string') {\n        var child = void 0;\n\n        try {\n          // try to get element\n          child = document.querySelector(this.content);\n          this._panelElement.appendChild(child);\n        } catch (e) {\n          this._panelElement.innerHTML = this.content;\n        }\n      }\n    }\n\n    /**\r\n     * Render markup for tab\r\n     * @param {String|Element} title - tab's title\r\n     * @private\r\n     */\n\n  }, {\n    key: '_render',\n    value: function _render() {\n      // create wrapper for tab\n      this._element = _cgComponentUtils2.default.createHTML('<li class=\\'' + TAB_CLASS + '\\'></li>');\n      this._element.addEventListener('click', this.select.bind(this));\n\n      // add attributes for wai aria support\n      this._element.id = this.id;\n      this._element.setAttribute('role', 'tab');\n      this._element.setAttribute('aria-controls', this.panelId);\n    }\n\n    /**\r\n     * Render markup for tab's panel\r\n     * @param {String|Element} content\r\n     * @private\r\n     */\n\n  }, {\n    key: '_renderPanel',\n    value: function _renderPanel() {\n      // create wrapper for tab\n      this._panelElement = _cgComponentUtils2.default.createHTML('<div class=\\'' + PANEL_CLASS + '\\'></div>');\n\n      // add attributes for wai aria support\n      this._panelElement.id = this.panelId;\n      this._panelElement.setAttribute('role', 'tabpanel');\n      this._panelElement.setAttribute('aria-labelledby', this.id);\n    }\n  }, {\n    key: 'width',\n    get: function get() {\n      return this._element.getBoundingClientRect().width;\n    }\n\n    /**\r\n     * Setter tab's title\r\n     * @param {string} value\r\n     */\n\n  }, {\n    key: 'title',\n    set: function set(value) {\n      this._title = value;\n      this._applyTitle();\n    }\n\n    /**\r\n     * Getter tab's string\r\n     * @returns {string}\r\n     */\n    ,\n    get: function get() {\n      return this._title;\n    }\n\n    /**\r\n     * Setter panel's content\r\n     * @param {element|string} value\r\n     */\n\n  }, {\n    key: 'content',\n    set: function set(value) {\n      this._content = value;\n      this._applyContent();\n    }\n\n    /**\r\n     * Getter panel's content\r\n     * @returns {element|string}\r\n     */\n    ,\n    get: function get() {\n      return this._content;\n    }\n  }]);\n\n  return Tab;\n}(_events2.default);\n\nmodule.exports = Tab;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/tab.js\n// module id = 6\n// module chunks = 0\n//# sourceURL=webpack:///./src/tab.js?");
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	eval("// Copyright Joyent, Inc. and other Node contributors.\n//\n// Permission is hereby granted, free of charge, to any person obtaining a\n// copy of this software and associated documentation files (the\n// \"Software\"), to deal in the Software without restriction, including\n// without limitation the rights to use, copy, modify, merge, publish,\n// distribute, sublicense, and/or sell copies of the Software, and to permit\n// persons to whom the Software is furnished to do so, subject to the\n// following conditions:\n//\n// The above copyright notice and this permission notice shall be included\n// in all copies or substantial portions of the Software.\n//\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN\n// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\n// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR\n// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE\n// USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nfunction EventEmitter() {\n  this._events = this._events || {};\n  this._maxListeners = this._maxListeners || undefined;\n}\nmodule.exports = EventEmitter;\n\n// Backwards-compat with node 0.10.x\nEventEmitter.EventEmitter = EventEmitter;\n\nEventEmitter.prototype._events = undefined;\nEventEmitter.prototype._maxListeners = undefined;\n\n// By default EventEmitters will print a warning if more than 10 listeners are\n// added to it. This is a useful default which helps finding memory leaks.\nEventEmitter.defaultMaxListeners = 10;\n\n// Obviously not all Emitters should be limited to 10. This function allows\n// that to be increased. Set to zero for unlimited.\nEventEmitter.prototype.setMaxListeners = function(n) {\n  if (!isNumber(n) || n < 0 || isNaN(n))\n    throw TypeError('n must be a positive number');\n  this._maxListeners = n;\n  return this;\n};\n\nEventEmitter.prototype.emit = function(type) {\n  var er, handler, len, args, i, listeners;\n\n  if (!this._events)\n    this._events = {};\n\n  // If there is no 'error' event listener then throw.\n  if (type === 'error') {\n    if (!this._events.error ||\n        (isObject(this._events.error) && !this._events.error.length)) {\n      er = arguments[1];\n      if (er instanceof Error) {\n        throw er; // Unhandled 'error' event\n      } else {\n        // At least give some kind of context to the user\n        var err = new Error('Uncaught, unspecified \"error\" event. (' + er + ')');\n        err.context = er;\n        throw err;\n      }\n    }\n  }\n\n  handler = this._events[type];\n\n  if (isUndefined(handler))\n    return false;\n\n  if (isFunction(handler)) {\n    switch (arguments.length) {\n      // fast cases\n      case 1:\n        handler.call(this);\n        break;\n      case 2:\n        handler.call(this, arguments[1]);\n        break;\n      case 3:\n        handler.call(this, arguments[1], arguments[2]);\n        break;\n      // slower\n      default:\n        args = Array.prototype.slice.call(arguments, 1);\n        handler.apply(this, args);\n    }\n  } else if (isObject(handler)) {\n    args = Array.prototype.slice.call(arguments, 1);\n    listeners = handler.slice();\n    len = listeners.length;\n    for (i = 0; i < len; i++)\n      listeners[i].apply(this, args);\n  }\n\n  return true;\n};\n\nEventEmitter.prototype.addListener = function(type, listener) {\n  var m;\n\n  if (!isFunction(listener))\n    throw TypeError('listener must be a function');\n\n  if (!this._events)\n    this._events = {};\n\n  // To avoid recursion in the case that type === \"newListener\"! Before\n  // adding it to the listeners, first emit \"newListener\".\n  if (this._events.newListener)\n    this.emit('newListener', type,\n              isFunction(listener.listener) ?\n              listener.listener : listener);\n\n  if (!this._events[type])\n    // Optimize the case of one listener. Don't need the extra array object.\n    this._events[type] = listener;\n  else if (isObject(this._events[type]))\n    // If we've already got an array, just append.\n    this._events[type].push(listener);\n  else\n    // Adding the second element, need to change to array.\n    this._events[type] = [this._events[type], listener];\n\n  // Check for listener leak\n  if (isObject(this._events[type]) && !this._events[type].warned) {\n    if (!isUndefined(this._maxListeners)) {\n      m = this._maxListeners;\n    } else {\n      m = EventEmitter.defaultMaxListeners;\n    }\n\n    if (m && m > 0 && this._events[type].length > m) {\n      this._events[type].warned = true;\n      console.error('(node) warning: possible EventEmitter memory ' +\n                    'leak detected. %d listeners added. ' +\n                    'Use emitter.setMaxListeners() to increase limit.',\n                    this._events[type].length);\n      if (typeof console.trace === 'function') {\n        // not supported in IE 10\n        console.trace();\n      }\n    }\n  }\n\n  return this;\n};\n\nEventEmitter.prototype.on = EventEmitter.prototype.addListener;\n\nEventEmitter.prototype.once = function(type, listener) {\n  if (!isFunction(listener))\n    throw TypeError('listener must be a function');\n\n  var fired = false;\n\n  function g() {\n    this.removeListener(type, g);\n\n    if (!fired) {\n      fired = true;\n      listener.apply(this, arguments);\n    }\n  }\n\n  g.listener = listener;\n  this.on(type, g);\n\n  return this;\n};\n\n// emits a 'removeListener' event iff the listener was removed\nEventEmitter.prototype.removeListener = function(type, listener) {\n  var list, position, length, i;\n\n  if (!isFunction(listener))\n    throw TypeError('listener must be a function');\n\n  if (!this._events || !this._events[type])\n    return this;\n\n  list = this._events[type];\n  length = list.length;\n  position = -1;\n\n  if (list === listener ||\n      (isFunction(list.listener) && list.listener === listener)) {\n    delete this._events[type];\n    if (this._events.removeListener)\n      this.emit('removeListener', type, listener);\n\n  } else if (isObject(list)) {\n    for (i = length; i-- > 0;) {\n      if (list[i] === listener ||\n          (list[i].listener && list[i].listener === listener)) {\n        position = i;\n        break;\n      }\n    }\n\n    if (position < 0)\n      return this;\n\n    if (list.length === 1) {\n      list.length = 0;\n      delete this._events[type];\n    } else {\n      list.splice(position, 1);\n    }\n\n    if (this._events.removeListener)\n      this.emit('removeListener', type, listener);\n  }\n\n  return this;\n};\n\nEventEmitter.prototype.removeAllListeners = function(type) {\n  var key, listeners;\n\n  if (!this._events)\n    return this;\n\n  // not listening for removeListener, no need to emit\n  if (!this._events.removeListener) {\n    if (arguments.length === 0)\n      this._events = {};\n    else if (this._events[type])\n      delete this._events[type];\n    return this;\n  }\n\n  // emit removeListener for all listeners on all events\n  if (arguments.length === 0) {\n    for (key in this._events) {\n      if (key === 'removeListener') continue;\n      this.removeAllListeners(key);\n    }\n    this.removeAllListeners('removeListener');\n    this._events = {};\n    return this;\n  }\n\n  listeners = this._events[type];\n\n  if (isFunction(listeners)) {\n    this.removeListener(type, listeners);\n  } else if (listeners) {\n    // LIFO order\n    while (listeners.length)\n      this.removeListener(type, listeners[listeners.length - 1]);\n  }\n  delete this._events[type];\n\n  return this;\n};\n\nEventEmitter.prototype.listeners = function(type) {\n  var ret;\n  if (!this._events || !this._events[type])\n    ret = [];\n  else if (isFunction(this._events[type]))\n    ret = [this._events[type]];\n  else\n    ret = this._events[type].slice();\n  return ret;\n};\n\nEventEmitter.prototype.listenerCount = function(type) {\n  if (this._events) {\n    var evlistener = this._events[type];\n\n    if (isFunction(evlistener))\n      return 1;\n    else if (evlistener)\n      return evlistener.length;\n  }\n  return 0;\n};\n\nEventEmitter.listenerCount = function(emitter, type) {\n  return emitter.listenerCount(type);\n};\n\nfunction isFunction(arg) {\n  return typeof arg === 'function';\n}\n\nfunction isNumber(arg) {\n  return typeof arg === 'number';\n}\n\nfunction isObject(arg) {\n  return typeof arg === 'object' && arg !== null;\n}\n\nfunction isUndefined(arg) {\n  return arg === void 0;\n}\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/events/events.js\n// module id = 7\n// module chunks = 0\n//# sourceURL=webpack:///./~/events/events.js?");
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	eval("'use strict';\r\n\r\n__webpack_require__(9);\r\n\r\nmodule.exports = {\r\n\r\n  /**\r\n   *\r\n   * @param {Element} element\r\n   * @param {string} className\r\n   */\r\n  addClass: function addClass(element, className) {\r\n    var re = new RegExp('(^|\\\\s)' + className + '(\\\\s|$)', 'g');\r\n    if (re.test(element.className)) return;\r\n    element.className = (element.className + ' ' + className).replace(/\\s+/g, ' ').replace(/(^ | $)/g, '');\r\n  },\r\n\r\n  /**\r\n   *\r\n   * @param {Element} element\r\n   * @param {string} className\r\n   * @returns {boolean}\r\n   */\r\n  hasClass: function (element, className) {\r\n    return element.matches('.' + className);\r\n  },\r\n\r\n  /**\r\n   *\r\n   * @param {Element} element\r\n   * @param {string} className\r\n   */\r\n  removeClass: function removeClass(element, className) {\r\n    var re = new RegExp('(^|\\\\s)' + className + '(\\\\s|$)', 'g');\r\n    element.className = element.className.replace(re, '$1').replace(/\\s+/g, ' ').replace(/(^ | $)/g, '');\r\n  },\r\n\r\n  /**\r\n   * Removes current node from tree.\r\n   * @param {Node} node\r\n   */\r\n  removeNode: function removeNode(node) {\r\n    if (node.parentNode)\r\n      node.parentNode.removeChild(node);\r\n  },\r\n\r\n  /**\r\n   *\r\n   * @param {string} html\r\n   * @returns {Node}\r\n   */\r\n  createHTML: function createHTML(html) {\r\n    var div = document.createElement('div');\r\n    div.innerHTML = html.trim();\r\n    return div.firstChild;\r\n  },\r\n\r\n  /**\r\n   * Adds coordinates to event object independently of event from touching or mouse. (cx, cy - client coordinates, px, py - page coordinates)\r\n   * @param event\r\n   */\r\n  extendEventObject: function extendEventObject(event) {\r\n    if (event.touches && event.touches[0]) {\r\n      event.cx = event.touches[0].clientX;\r\n      event.cy = event.touches[0].clientY;\r\n      event.px = event.touches[0].pageX;\r\n      event.py = event.touches[0].pageY;\r\n    }\r\n    else if (event.changedTouches && event.changedTouches[0]) {\r\n      event.cx = event.changedTouches[0].clientX;\r\n      event.cy = event.changedTouches[0].clientY;\r\n      event.px = event.changedTouches[0].pageX;\r\n      event.py = event.changedTouches[0].pageY;\r\n    }\r\n    else {\r\n      event.cx = event.clientX;\r\n      event.cy = event.clientY;\r\n      event.px = event.pageX;\r\n      event.py = event.pageY;\r\n    }\r\n  }\r\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/cg-component-utils/index.js\n// module id = 8\n// module chunks = 0\n//# sourceURL=webpack:///./~/cg-component-utils/index.js?");
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	eval("'use strict';\r\n\r\nif (!Element.prototype.matches) {\r\n  Element.prototype.matches =\r\n    Element.prototype.matchesSelector ||\r\n    Element.prototype.mozMatchesSelector ||\r\n    Element.prototype.msMatchesSelector ||\r\n    Element.prototype.oMatchesSelector ||\r\n    Element.prototype.webkitMatchesSelector ||\r\n    function (s) {\r\n      var matches = (this.document || this.ownerDocument).querySelectorAll(s),\r\n          i       = matches.length;\r\n      while (--i >= 0 && matches.item(i) !== this) {\r\n        // empty\r\n      }\r\n      return i > -1;\r\n    };\r\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/cg-component-utils/polyfills.js\n// module id = 9\n// module chunks = 0\n//# sourceURL=webpack:///./~/cg-component-utils/polyfills.js?");
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	eval("'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.default = {\n  /**\r\n   * Generate series of characters\r\n   * @param {Number|String} [length] - id length\r\n   * @returns {string}\r\n   */\n  generateId: function generateId(length) {\n    length = parseInt(length, 10);\n    length = isNaN(length) ? 4 : Math.abs(length);\n    length = Math.max(1, Math.min(length, 20));\n\n    var characters = [];\n    var rangeList = [\n    // for more information see ASCII table\n    // example: 48 it's \"0\", 65 it's \"A\" and etc\n    [48, 57], // from 0 to 9;\n    [65, 90], // from A to Z;\n    [97, 122] // from a to z;\n    ];\n\n    var characterIndex = void 0;\n    var rangeIndex = void 0;\n    var character = void 0;\n    var range = void 0;\n    var max = void 0;\n    var min = void 0;\n\n    for (var i = 0; i < length; i++) {\n      // get one range from range list\n      rangeIndex = Math.floor(Math.random() * rangeList.length);\n      range = rangeList[rangeIndex];\n\n      min = Math.max(range[0], range[1]);\n      max = Math.min(range[0], range[1]);\n\n      // get ASCII code from selected range\n      characterIndex = Math.floor(Math.random() * (max - min) + min);\n      character = String.fromCharCode(characterIndex);\n\n      characters.push(character);\n    }\n\n    return characters.join('');\n  },\n  /**\r\n   * Get sizes of the Element\r\n   * @param {Element} element - element whose size you need to get\r\n   * @param {string} [prop] - which property return\r\n   * @return {object|number}\r\n   *\r\n   */\n  getClientRect: function getClientRect(element, prop) {\n    if (element instanceof HTMLElement) {\n      // get sizes of the element and return needed value\n      var clientRect = element.getBoundingClientRect();\n\n      if (prop && prop in clientRect) {\n        return clientRect[prop];\n      }\n\n      return clientRect;\n    }\n  }\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/help-funcs.js\n// module id = 10\n// module chunks = 0\n//# sourceURL=webpack:///./src/help-funcs.js?");
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	eval("'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.default = {\n  CLASSES: {\n    TABS_CLASS: 'cg-tabs'\n  }\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/const.js\n// module id = 11\n// module chunks = 0\n//# sourceURL=webpack:///./src/const.js?");
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	eval("/* WEBPACK VAR INJECTION */(function(module) {/*!\r\n * @name JavaScript/NodeJS Merge v1.2.0\r\n * @author yeikos\r\n * @repository https://github.com/yeikos/js.merge\r\n\r\n * Copyright 2014 yeikos - MIT license\r\n * https://raw.github.com/yeikos/js.merge/master/LICENSE\r\n */\r\n\r\n;(function(isNode) {\r\n\r\n\t/**\r\n\t * Merge one or more objects \r\n\t * @param bool? clone\r\n\t * @param mixed,... arguments\r\n\t * @return object\r\n\t */\r\n\r\n\tvar Public = function(clone) {\r\n\r\n\t\treturn merge(clone === true, false, arguments);\r\n\r\n\t}, publicName = 'merge';\r\n\r\n\t/**\r\n\t * Merge two or more objects recursively \r\n\t * @param bool? clone\r\n\t * @param mixed,... arguments\r\n\t * @return object\r\n\t */\r\n\r\n\tPublic.recursive = function(clone) {\r\n\r\n\t\treturn merge(clone === true, true, arguments);\r\n\r\n\t};\r\n\r\n\t/**\r\n\t * Clone the input removing any reference\r\n\t * @param mixed input\r\n\t * @return mixed\r\n\t */\r\n\r\n\tPublic.clone = function(input) {\r\n\r\n\t\tvar output = input,\r\n\t\t\ttype = typeOf(input),\r\n\t\t\tindex, size;\r\n\r\n\t\tif (type === 'array') {\r\n\r\n\t\t\toutput = [];\r\n\t\t\tsize = input.length;\r\n\r\n\t\t\tfor (index=0;index<size;++index)\r\n\r\n\t\t\t\toutput[index] = Public.clone(input[index]);\r\n\r\n\t\t} else if (type === 'object') {\r\n\r\n\t\t\toutput = {};\r\n\r\n\t\t\tfor (index in input)\r\n\r\n\t\t\t\toutput[index] = Public.clone(input[index]);\r\n\r\n\t\t}\r\n\r\n\t\treturn output;\r\n\r\n\t};\r\n\r\n\t/**\r\n\t * Merge two objects recursively\r\n\t * @param mixed input\r\n\t * @param mixed extend\r\n\t * @return mixed\r\n\t */\r\n\r\n\tfunction merge_recursive(base, extend) {\r\n\r\n\t\tif (typeOf(base) !== 'object')\r\n\r\n\t\t\treturn extend;\r\n\r\n\t\tfor (var key in extend) {\r\n\r\n\t\t\tif (typeOf(base[key]) === 'object' && typeOf(extend[key]) === 'object') {\r\n\r\n\t\t\t\tbase[key] = merge_recursive(base[key], extend[key]);\r\n\r\n\t\t\t} else {\r\n\r\n\t\t\t\tbase[key] = extend[key];\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t\treturn base;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Merge two or more objects\r\n\t * @param bool clone\r\n\t * @param bool recursive\r\n\t * @param array argv\r\n\t * @return object\r\n\t */\r\n\r\n\tfunction merge(clone, recursive, argv) {\r\n\r\n\t\tvar result = argv[0],\r\n\t\t\tsize = argv.length;\r\n\r\n\t\tif (clone || typeOf(result) !== 'object')\r\n\r\n\t\t\tresult = {};\r\n\r\n\t\tfor (var index=0;index<size;++index) {\r\n\r\n\t\t\tvar item = argv[index],\r\n\r\n\t\t\t\ttype = typeOf(item);\r\n\r\n\t\t\tif (type !== 'object') continue;\r\n\r\n\t\t\tfor (var key in item) {\r\n\r\n\t\t\t\tvar sitem = clone ? Public.clone(item[key]) : item[key];\r\n\r\n\t\t\t\tif (recursive) {\r\n\r\n\t\t\t\t\tresult[key] = merge_recursive(result[key], sitem);\r\n\r\n\t\t\t\t} else {\r\n\r\n\t\t\t\t\tresult[key] = sitem;\r\n\r\n\t\t\t\t}\r\n\r\n\t\t\t}\r\n\r\n\t\t}\r\n\r\n\t\treturn result;\r\n\r\n\t}\r\n\r\n\t/**\r\n\t * Get type of variable\r\n\t * @param mixed input\r\n\t * @return string\r\n\t *\r\n\t * @see http://jsperf.com/typeofvar\r\n\t */\r\n\r\n\tfunction typeOf(input) {\r\n\r\n\t\treturn ({}).toString.call(input).slice(8, -1).toLowerCase();\r\n\r\n\t}\r\n\r\n\tif (isNode) {\r\n\r\n\t\tmodule.exports = Public;\r\n\r\n\t} else {\r\n\r\n\t\twindow[publicName] = Public;\r\n\r\n\t}\r\n\r\n})(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);\n/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/merge/merge.js\n// module id = 12\n// module chunks = 0\n//# sourceURL=webpack:///./~/merge/merge.js?");
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	eval("module.exports = function(module) {\r\n\tif(!module.webpackPolyfill) {\r\n\t\tmodule.deprecate = function() {};\r\n\t\tmodule.paths = [];\r\n\t\t// module.parent = undefined by default\r\n\t\tmodule.children = [];\r\n\t\tmodule.webpackPolyfill = 1;\r\n\t}\r\n\treturn module;\r\n}\r\n\n\n//////////////////\n// WEBPACK FOOTER\n// (webpack)/buildin/module.js\n// module id = 13\n// module chunks = 0\n//# sourceURL=webpack:///(webpack)/buildin/module.js?");
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	eval("'use strict';\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _cgComponentUtils = __webpack_require__(8);\n\nvar _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);\n\nvar _helpFuncs = __webpack_require__(10);\n\nvar _helpFuncs2 = _interopRequireDefault(_helpFuncs);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar Scroll = function () {\n  /**\r\n   * Added pseudo-scroll functionality\r\n   * @param {Element} element\r\n   */\n  function Scroll(element) {\n    _classCallCheck(this, Scroll);\n\n    this._element = element;\n    this._content = element.children[0];\n    this._parentElement = element.parentNode;\n\n    this.controls = {};\n\n    this._render();\n    this._init();\n    this._updateControls();\n    this.enable();\n  }\n\n  /**\r\n   * Maximum value of the scroll\r\n   * @returns {*|number}\r\n   */\n\n\n  _createClass(Scroll, [{\n    key: '_updateControls',\n\n\n    /**\r\n     * show or hide arrows\r\n     */\n    value: function _updateControls() {\n      this.controls.right.style.display = this.value === this.max ? 'none' : '';\n      this.controls.left.style.display = this.value === this.min ? 'none' : '';\n    }\n\n    /**\r\n     * Update current scroll value\r\n     * @param {number} [value]\r\n     */\n\n  }, {\n    key: 'move',\n    value: function move(value) {\n      this.value += value || this.step;\n    }\n\n    /**\r\n     * synchronize element scroll value and model value\r\n     */\n\n  }, {\n    key: 'update',\n    value: function update() {\n      // synchronize element scroll value and model value\n      this.value = this._element.scrollLeft;\n    }\n\n    /**\r\n     *\r\n     */\n\n  }, {\n    key: 'enable',\n    value: function enable() {\n      if (this.disabled) {\n        _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');\n\n        this._updateControls();\n      }\n    }\n\n    /**\r\n     * disable scroll functionality\r\n     */\n\n  }, {\n    key: 'disable',\n    value: function disable() {\n      if (this.disabled) return;\n\n      _cgComponentUtils2.default.removeClass(this._parentElement, 'scrollable');\n\n      // hide arrows\n      this.controls.right.style.display = 'none';\n      this.controls.left.style.display = 'none';\n    }\n\n    /**\r\n     * set initial app state\r\n     * @private\r\n     */\n\n  }, {\n    key: '_init',\n    value: function _init() {\n      this.step = this.elementSize.width / 2;\n      this.disabled = false;\n\n      this._element.addEventListener('scroll', this.update.bind(this));\n    }\n\n    /**\r\n     * Render html markup\r\n     * @returns {{}|*}\r\n     * @private\r\n     */\n\n  }, {\n    key: '_render',\n    value: function _render() {\n      var _this = this;\n\n      _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');\n\n      var leftArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');\n      var rightArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');\n\n      leftArrow.className = 'arrow left';\n      rightArrow.className = 'arrow right';\n\n      this.controls.left = leftArrow;\n      this.controls.right = rightArrow;\n\n      this._parentElement.appendChild(leftArrow);\n      this._parentElement.appendChild(rightArrow);\n\n      leftArrow.addEventListener('click', function () {\n        _this.move(-_this.step);\n      });\n      rightArrow.addEventListener('click', function () {\n        _this.move(_this.step);\n      });\n\n      return this.controls;\n    }\n  }, {\n    key: 'max',\n    get: function get() {\n      var containerWidth = this.elementSize.width;\n      var elementWidth = this.contentSize.width;\n\n      return Math.ceil(elementWidth - containerWidth);\n    }\n\n    /**\r\n     * Minimum value of the scroll\r\n     * @returns {number}\r\n     */\n\n  }, {\n    key: 'min',\n    get: function get() {\n      return 0;\n    }\n\n    /**\r\n     * Setter value for scrolling element\r\n     * @param {number} value\r\n     */\n\n  }, {\n    key: 'value',\n    set: function set(value) {\n      value = Math.max(value, this.min);\n      value = Math.min(value, this.max);\n\n      this._element.scrollLeft = value;\n\n      this._updateControls();\n    }\n\n    /**\r\n     * Getter value for scrolling element\r\n     * @returns {number}\r\n     */\n    ,\n    get: function get() {\n      return this._element.scrollLeft;\n    }\n\n    /**\r\n     * Setter for Scroll step\r\n     * @param value\r\n     */\n\n  }, {\n    key: 'step',\n    set: function set(value) {\n      this._step = value;\n    }\n\n    /**\r\n     * Getter for Scroll step\r\n     * @returns {*}\r\n     */\n    ,\n    get: function get() {\n      return this._step;\n    }\n  }, {\n    key: 'elementSize',\n    get: function get() {\n      return _helpFuncs2.default.getClientRect(this._element);\n    }\n  }, {\n    key: 'contentSize',\n    get: function get() {\n      return _helpFuncs2.default.getClientRect(this._content);\n    }\n\n    /**\r\n     * Disabled flag\r\n     * @param disable\r\n     */\n\n  }, {\n    key: 'disabled',\n    set: function set(disable) {\n      this._disabled = disable;\n    },\n    get: function get() {\n      return this._disabled;\n    }\n  }]);\n\n  return Scroll;\n}();\n\nmodule.exports = Scroll;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/scroll.js\n// module id = 14\n// module chunks = 0\n//# sourceURL=webpack:///./src/scroll.js?");
-
-/***/ }
-/******/ ])
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-;
+/* eslint-disable no-magic-numbers */
+exports.default = {
+  /**
+   * Generate series of characters
+   * @param {Number|String} idLength - id length
+   * @returns {string} id
+   */
+  generateId: function generateId(idLength) {
+    var length = parseInt(idLength);
+
+    length = isNaN(length) ? 4 : Math.abs(length);
+    length = Math.max(1, Math.min(length, 20));
+
+    var characters = [];
+    var rangeList = [
+    // For more information see ASCII table
+    // Example: 48 it's "0", 65 it's "A" and etc
+    [48, 57], // From 0 to 9;
+    [65, 90], // From A to Z;
+    [97, 122] // From a to z;
+    ];
+
+    for (var i = 0; i < length; i++) {
+      // Get one range from range list
+      var rangeIndex = Math.floor(Math.random() * rangeList.length);
+      var range = rangeList[rangeIndex];
+
+      var min = Math.max(range[0], range[1]);
+      var max = Math.min(range[0], range[1]);
+
+      // Get ASCII code from selected range
+      var characterIndex = Math.floor(Math.random() * (max - min) + min);
+      var character = String.fromCharCode(characterIndex);
+
+      characters.push(character);
+    }
+
+    return characters.join('');
+  },
+
+  /**
+   * Get sizes of the Element
+   * @param {Element} element - element whose size you need to get
+   * @param {string} prop - which property return
+   * @return {object|number} - property or client rect
+   */
+  getClientRect: function getClientRect(element, prop) {
+    if (element instanceof HTMLElement) {
+      // Get sizes of the element and return needed value
+      var clientRect = element.getBoundingClientRect();
+
+      if (prop && prop in clientRect) {
+        return clientRect[prop];
+      }
+
+      return clientRect;
+    }
+  }
+};
+module.exports = exports['default'];
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  CLASSES: {
+    TABS_CLASS: 'cg-tabs'
+  }
+};
+module.exports = exports['default'];
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module) {/*!
+ * @name JavaScript/NodeJS Merge v1.2.0
+ * @author yeikos
+ * @repository https://github.com/yeikos/js.merge
+
+ * Copyright 2014 yeikos - MIT license
+ * https://raw.github.com/yeikos/js.merge/master/LICENSE
+ */
+
+;(function(isNode) {
+
+	/**
+	 * Merge one or more objects 
+	 * @param bool? clone
+	 * @param mixed,... arguments
+	 * @return object
+	 */
+
+	var Public = function(clone) {
+
+		return merge(clone === true, false, arguments);
+
+	}, publicName = 'merge';
+
+	/**
+	 * Merge two or more objects recursively 
+	 * @param bool? clone
+	 * @param mixed,... arguments
+	 * @return object
+	 */
+
+	Public.recursive = function(clone) {
+
+		return merge(clone === true, true, arguments);
+
+	};
+
+	/**
+	 * Clone the input removing any reference
+	 * @param mixed input
+	 * @return mixed
+	 */
+
+	Public.clone = function(input) {
+
+		var output = input,
+			type = typeOf(input),
+			index, size;
+
+		if (type === 'array') {
+
+			output = [];
+			size = input.length;
+
+			for (index=0;index<size;++index)
+
+				output[index] = Public.clone(input[index]);
+
+		} else if (type === 'object') {
+
+			output = {};
+
+			for (index in input)
+
+				output[index] = Public.clone(input[index]);
+
+		}
+
+		return output;
+
+	};
+
+	/**
+	 * Merge two objects recursively
+	 * @param mixed input
+	 * @param mixed extend
+	 * @return mixed
+	 */
+
+	function merge_recursive(base, extend) {
+
+		if (typeOf(base) !== 'object')
+
+			return extend;
+
+		for (var key in extend) {
+
+			if (typeOf(base[key]) === 'object' && typeOf(extend[key]) === 'object') {
+
+				base[key] = merge_recursive(base[key], extend[key]);
+
+			} else {
+
+				base[key] = extend[key];
+
+			}
+
+		}
+
+		return base;
+
+	}
+
+	/**
+	 * Merge two or more objects
+	 * @param bool clone
+	 * @param bool recursive
+	 * @param array argv
+	 * @return object
+	 */
+
+	function merge(clone, recursive, argv) {
+
+		var result = argv[0],
+			size = argv.length;
+
+		if (clone || typeOf(result) !== 'object')
+
+			result = {};
+
+		for (var index=0;index<size;++index) {
+
+			var item = argv[index],
+
+				type = typeOf(item);
+
+			if (type !== 'object') continue;
+
+			for (var key in item) {
+
+				var sitem = clone ? Public.clone(item[key]) : item[key];
+
+				if (recursive) {
+
+					result[key] = merge_recursive(result[key], sitem);
+
+				} else {
+
+					result[key] = sitem;
+
+				}
+
+			}
+
+		}
+
+		return result;
+
+	}
+
+	/**
+	 * Get type of variable
+	 * @param mixed input
+	 * @return string
+	 *
+	 * @see http://jsperf.com/typeofvar
+	 */
+
+	function typeOf(input) {
+
+		return ({}).toString.call(input).slice(8, -1).toLowerCase();
+
+	}
+
+	if (isNode) {
+
+		module.exports = Public;
+
+	} else {
+
+		window[publicName] = Public;
+
+	}
+
+})(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(6);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+__webpack_require__(7);
+
+__webpack_require__(11);
+
+var _tab = __webpack_require__(13);
+
+var _tab2 = _interopRequireDefault(_tab);
+
+var _events = __webpack_require__(1);
+
+var _events2 = _interopRequireDefault(_events);
+
+var _scroll = __webpack_require__(16);
+
+var _scroll2 = _interopRequireDefault(_scroll);
+
+var _cgComponentUtils = __webpack_require__(0);
+
+var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+var _const = __webpack_require__(3);
+
+var _const2 = _interopRequireDefault(_const);
+
+var _merge = __webpack_require__(4);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TABS_CLASS = _const2.default.CLASSES.TABS_CLASS;
+var TABS_CONTAINER_CLASS = TABS_CLASS + '-tab-list-container';
+var PANELS_CONTAINER_CLASS = TABS_CLASS + '-panel-list-container';
+var TABS_CONTENT_CLASS = TABS_CLASS + '-tab-list-content';
+var TAB_LIST_CLASS = TABS_CLASS + '-tab-list';
+var PANEL_LIST_CLASS = TABS_CLASS + '-panel-list';
+
+var KEY_CODE = {
+  ARROW: {
+    LEFT: 37,
+    RIGHT: 39,
+    UP: 38,
+    DOWN: 40
+  },
+  HOME: 36,
+  END: 35
+};
+
+/**
+ * Tabs's customizing settings
+ * @typedef {Object} TabsSettings
+ * @property {Element|string} container - DOM Element or element id in which slider instance should be rendered.
+ *                                        This property can be omitted. In this case new DOM element will be created
+ *                                        and can be accessed via `tabsInstance.container`
+ * @property {number} selected - selected tab
+ */
+
+/**
+ * Accessible Tabs Component
+ */
+
+var CgTabs = function (_EventEmitter) {
+  _inherits(CgTabs, _EventEmitter);
+
+  _createClass(CgTabs, null, [{
+    key: '_fixContainer',
+
+
+    /**
+     * Get element of container
+     * @param {Element|String} container
+     * @returns {Element} fixed container
+     * @private
+     */
+    value: function _fixContainer(container) {
+      if (container instanceof HTMLElement) {
+        return container;
+      }
+
+      if (typeof container === 'string') {
+        var element = document.querySelector(container);
+
+        if (element !== null) {
+          return element;
+        }
+      }
+    }
+  }, {
+    key: '_fixSetting',
+    value: function _fixSetting(name, value) {
+      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+      var result = value;
+
+      switch (name) {
+        // Field 'selected' should be a number
+        case 'selected':
+          if (isNaN(result)) {
+            result = DEFAULT_SETTINGS[name];
+          }
+          break;
+        default:
+          break;
+      }
+
+      return result;
+    }
+  }, {
+    key: '_fixSettings',
+    value: function _fixSettings(settings) {
+      for (var name in settings) {
+        if (settings.hasOwnProperty(name)) {
+          settings[name] = this._fixSetting(name, settings[name]);
+        }
+      }
+
+      return settings;
+    }
+
+    /**
+     * @param {Object} settings - user's settings extend default settings
+     * @constructor
+     */
+
+  }, {
+    key: 'DEFAULT_SETTINGS',
+
+    /**
+     * Default tab navigation's settings
+     * @property {string|element} container - container where will be placed tabs (element or selector)
+     * @property {number}         selected - index first selected tab
+     * @property {array}          tabs - tabs list
+     * @property {string}         tabs[].title - title for tab
+     * @property {element|string} tabs[].content - content for tab panel
+     * @returns {object} settings
+     */
+    get: function get() {
+      if (!this._DEFAULT_SETTINGS) {
+        this._DEFAULT_SETTINGS = {
+          selected: 0,
+          container: document.body,
+          tabs: [{
+            title: 'Sample',
+            content: 'Example Text'
+          }]
+        };
+      }
+
+      return this._DEFAULT_SETTINGS;
+    }
+
+    /**
+     * @property {string} SELECT - emit when user select one of the tabs
+     * @returns {object} events
+     * @static
+     */
+
+  }, {
+    key: 'EVENTS',
+    get: function get() {
+      if (!this._EVENTS) {
+        this._EVENTS = {
+          SELECT: 'select'
+        };
+      }
+
+      return this._EVENTS;
+    }
+  }]);
+
+  function CgTabs(settings) {
+    _classCallCheck(this, CgTabs);
+
+    var _this = _possibleConstructorReturn(this, (CgTabs.__proto__ || Object.getPrototypeOf(CgTabs)).call(this));
+
+    _this._render();
+    _this._applySettings(settings);
+    _this._createTabs();
+
+    _this.selectTab(_this.selected);
+    return _this;
+  }
+
+  /**
+   * The main container
+   */
+
+
+  _createClass(CgTabs, [{
+    key: 'addTab',
+
+
+    /**
+     * Add Tab element to current state
+     * @param {Object} options
+     * @param {Number} position
+     * @return {Tab} tab
+     */
+    value: function addTab(options, position) {
+      var _this2 = this;
+
+      var tab = new _tab2.default(options);
+
+      if (typeof position === 'number') {
+        if (position !== this.tabs.length) {
+          var reference = this.tabs[position]._element;
+
+          // Place element to the desired position of the array
+          this.tabs.splice(position, 0, tab);
+
+          // Increment selected index
+          this._settings.selected++;
+
+          this._tabListContent.insertBefore(tab._element, reference);
+        }
+      } else {
+        this._tabListContent.appendChild(tab._element);
+
+        // Write and append new tab on the page
+        this.tabs.push(tab);
+      }
+
+      this._panelListElement.appendChild(tab._panelElement);
+
+      // Attach custom events
+      tab.on('select', this._updateCurrentTab.bind(this, tab));
+      tab.on('remove', this._updateSelectedTab.bind(this, tab));
+      tab.on('remove', this._updateScrollState.bind(this));
+
+      // Attach event, for switching between tabs
+      tab._element.addEventListener('keydown', function (e) {
+        var keyCode = e.which || e.keyCode;
+
+        switch (keyCode) {
+          // For previous tab
+          case KEY_CODE.ARROW.LEFT:
+          case KEY_CODE.ARROW.DOWN:
+            _this2.selectPrevTab();
+            break;
+          // For next tab
+          case KEY_CODE.ARROW.RIGHT:
+          case KEY_CODE.ARROW.UP:
+            _this2.selectNextTab();
+            break;
+          // Switch to first tab
+          case KEY_CODE.HOME:
+            _this2.selectTab(0);
+            break;
+          // Switch to last tab
+          case KEY_CODE.END:
+            _this2.selectTab(_this2.tabs.length - 1);
+            break;
+          default:
+            break;
+        }
+
+        _this2.tab.focus();
+      });
+
+      tab.close();
+
+      this._updateScrollState();
+
+      return tab;
+    }
+
+    /**
+     * Select next tab from tabs list
+     */
+
+  }, {
+    key: 'selectNextTab',
+    value: function selectNextTab() {
+      this.selected++;
+    }
+
+    /**
+     * Select previous tab from tabs list
+     */
+
+  }, {
+    key: 'selectPrevTab',
+    value: function selectPrevTab() {
+      this.selected--;
+    }
+
+    /**
+     * Select tab from index
+     * @param {Number} index - number from 0 to the number of tabs - 1
+     */
+
+  }, {
+    key: 'selectTab',
+    value: function selectTab(index) {
+      var tab = this.tabs[index];
+
+      if (typeof tab !== 'undefined') {
+        tab.select();
+      }
+    }
+
+    /**
+     * Remove tab from tabs list
+     * @param {Tab|Number} tab - tab or tab's index to be removed
+     */
+
+  }, {
+    key: 'removeTab',
+    value: function removeTab(tab) {
+      if (typeof tab === 'number') {
+        if (this.tabs[tab] !== undefined) {
+          this.tabs.splice(tab, 1);
+          this.tabs[tab].remove();
+        }
+
+        return;
+      }
+
+      // Get tab index from list
+      var index = this.tabs.indexOf(tab);
+
+      if (index > -1) {
+        this.tabs.splice(index, 1);
+
+        tab.remove();
+      }
+    }
+
+    /**
+     * Close current and save selected tab
+     * This method calls only after call Tab's method "select"
+     * @param {Tab} tab
+     * @private
+     */
+
+  }, {
+    key: '_updateCurrentTab',
+    value: function _updateCurrentTab(tab) {
+      if (this.tab) {
+        this.tab.close();
+      }
+
+      this.tab = tab;
+      this._settings.selected = this.tabs.indexOf(tab);
+    }
+
+    /**
+     * Apply settings on initialization
+     * @param {Object} settings
+     * @private
+     */
+
+  }, {
+    key: '_applySettings',
+    value: function _applySettings(settings) {
+      var fixedSettings = this.constructor._fixSettings(settings);
+
+      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+      // Extend user's settings with default settings
+      /** @type TabsSettings */
+      this._settings = (0, _merge2.default)({}, DEFAULT_SETTINGS, fixedSettings);
+
+      // Apply each setting using setter
+      for (var key in DEFAULT_SETTINGS) {
+        if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
+          this[key] = fixedSettings[key];
+        }
+      }
+    }
+
+    /**
+     * Renderer tab's mockup
+     * @private
+     */
+
+  }, {
+    key: '_render',
+    value: function _render() {
+      // Create container for tabs component
+      this._rootElement = document.createElement('div');
+      this._rootElement.className = TABS_CLASS;
+
+      // Draw shell for
+      var tabListContainer = _cgComponentUtils2.default.createHTML('\n      <div class="' + TABS_CONTAINER_CLASS + '">\n        <div class="' + TAB_LIST_CLASS + '">\n          <ul class="' + TABS_CONTENT_CLASS + '" role="tablist"></ul>\n        </div>\n      </div>\n    ');
+      var panelListContainer = _cgComponentUtils2.default.createHTML('\n      <div class="' + PANELS_CONTAINER_CLASS + '">\n        <div class="' + PANEL_LIST_CLASS + '"></div>\n      </div>\n    ');
+
+      this._tabListContainer = tabListContainer;
+      this._tabListElement = tabListContainer.querySelector('.' + TAB_LIST_CLASS);
+      this._tabListContent = tabListContainer.querySelector('.' + TABS_CONTENT_CLASS);
+      this._panelListElement = panelListContainer.querySelector('.' + PANEL_LIST_CLASS);
+
+      this._rootElement.appendChild(tabListContainer);
+      this._rootElement.appendChild(panelListContainer);
+    }
+
+    /**
+     * Create and add tabs into the tabs list
+     * @private
+     */
+
+  }, {
+    key: '_createTabs',
+    value: function _createTabs() {
+      var _this3 = this;
+
+      this.tabs = [];
+
+      this._settings.tabs.forEach(function (tab) {
+        _this3.addTab(tab);
+      });
+    }
+
+    /**
+     * If selected tab was removed, select another tab instead
+     * @param {Tab} tab
+     * @private
+     */
+
+  }, {
+    key: '_updateSelectedTab',
+    value: function _updateSelectedTab(tab) {
+      var index = this.tabs.indexOf(tab);
+
+      if (index > -1) {
+        this.tabs.splice(index, 1);
+
+        if (this.selected === index) {
+          this.selectNextTab();
+        }
+      }
+    }
+
+    /**
+     * When numbers of the tabs more than container could contain in one line -
+     * need to add useful arrows to make the tabs scrollable.
+     * @private
+     */
+
+  }, {
+    key: '_updateScrollState',
+    value: function _updateScrollState() {
+      // Get tab list panel size
+      var contentWidth = this._tabListContent.getBoundingClientRect().width;
+      var containerWidth = this._tabListContainer.getBoundingClientRect().width;
+      var diff = contentWidth - containerWidth;
+
+      if (diff > 0) {
+        if (!this.scroll) {
+          this.scroll = new _scroll2.default(this._tabListElement);
+        }
+        this.scroll.enable();
+      } else if (this.scroll) {
+        this.scroll.disable();
+      }
+    }
+  }, {
+    key: 'container',
+    get: function get() {
+      return this._settings.container;
+    }
+
+    /**
+     * Placed current component's node into the new container
+     * @param {*} value
+     */
+    ,
+    set: function set(value) {
+      var container = this.constructor._fixContainer(value);
+
+      if (typeof container !== 'undefined') {
+        this._settings.container = container;
+        this._settings.container.appendChild(this._rootElement);
+      }
+    }
+
+    /**
+     * Setter for selecting tab
+     * @param {number} value
+     */
+
+  }, {
+    key: 'selected',
+    set: function set(value) {
+      var index = +value;
+
+      if (isNaN(index)) {
+        // Must be a number
+        return;
+      }
+
+      // Check that value is between first and last tabs
+      index = index > this.tabs.length - 1 ? 0 : index;
+      index = index < 0 ? this.tabs.length - 1 : index;
+
+      this._settings.selected = index;
+      this.selectTab(index);
+    }
+
+    /**
+     * Getter for selecting tab
+     * @returns {number} selected tab index
+     */
+    ,
+    get: function get() {
+      return this._settings.selected;
+    }
+  }]);
+
+  return CgTabs;
+}(_events2.default);
+
+module.exports = CgTabs;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(8);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(10)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/less-loader/index.js!./common.less", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/less-loader/index.js!./common.less");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(9)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".cg-tabs {\n  position: relative;\n  width: 100%;\n  height: 100%;\n  color: #29303D;\n}\n.cg-tabs .cg-tabs-tab-list-container {\n  background: white;\n  position: relative;\n  width: 100%;\n}\n.cg-tabs .cg-tabs-tab-list-container .cg-tabs-tab-list {\n  border-bottom: 2px solid white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n  white-space: nowrap;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab {\n  height: 100%;\n  position: relative;\n  display: inline-block;\n  padding: 15px 20px;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background: wheat;\n  margin-right: 2px;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.cg-tabs-tab-select {\n  background: firebrick;\n  color: white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:focus {\n  outline: none;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:not(.is-mouse-focused):focus {\n  outline: 1px dashed firebrick;\n}\n.cg-tabs .cg-tabs-panel-list-container {\n  background: #EFF0F2;\n  position: relative;\n  width: 100%;\n  overflow: auto;\n}\n.cg-tabs .cg-tabs-panel-list-container .cg-tabs-panel-list {\n  padding: 20px;\n  min-height: 100%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
+	}),
+	getHeadElement = memoize(function () {
+		return document.head || document.getElementsByTagName("head")[0];
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [];
+
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the bottom of <head>.
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+}
+
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var head = getHeadElement();
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			head.insertBefore(styleElement, head.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			head.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		head.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	styleElement.type = "text/css";
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function createLinkElement(options) {
+	var linkElement = document.createElement("link");
+	linkElement.rel = "stylesheet";
+	insertStyleElement(options, linkElement);
+	return linkElement;
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove;
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else if(obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function") {
+		styleElement = createLinkElement(options);
+		update = updateLink.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+			if(styleElement.href)
+				URL.revokeObjectURL(styleElement.href);
+		};
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		styleElement.setAttribute("media", media)
+	}
+
+	if(styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink(linkElement, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	if(sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = linkElement.href;
+
+	linkElement.href = URL.createObjectURL(blob);
+
+	if(oldSrc)
+		URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(12);
+
+(function () {
+    var MOUSE_FOCUSED_CLASS = 'is-mouse-focused';
+
+    if (window.mouseFocusingInitialized)
+        return;
+
+    window.mouseFocusingInitialized = true;
+
+    if (document.readyState == "interactive") {
+        addListeners();
+    }
+    else {
+        document.addEventListener('DOMContentLoaded', addListeners);
+    }
+
+    function isSvgElement(element) {
+        return element.namespaceURI && element.namespaceURI.toLowerCase().indexOf('svg') !== -1;
+    }
+
+    function addListeners() {
+        var justBlured;
+        var wasMouseFocused;
+        document.body.addEventListener('mousedown', function (e) {
+            var el = e.target;
+            var labeledElement;
+
+            // collect clicked element with it's parents before body-element (except svg elements)
+            var els = [];
+            while (el && el.tagName && el.tagName.toLowerCase() != 'body') {
+                if (!isSvgElement(el)) {
+                    els.push(el);
+                    el.addEventListener('focus', onFocus);
+
+                    // if label element is clicked, bound element can be focused
+                    if (el.tagName.toLowerCase() === 'label') {
+                        // save element bound to label
+                        if (el.getAttribute('for')) {
+                            labeledElement = document.getElementById(el.getAttribute('for'));
+                        }
+                        else {
+                            labeledElement = el.querySelector('input');
+                        }
+                        if (labeledElement) {
+                            labeledElement.addEventListener('focus', onFocus);
+                            document.addEventListener('mouseup', onMouseUp);
+                        }
+                    }
+                }
+                el = el.parentNode;
+            }
+
+            // if clicked element has already focused by keyboard
+            // wait for `document.activeElement` to change
+            setTimeout(function () {
+                if (isSvgElement(document.activeElement))
+                    return;
+
+                // find focused element
+                onFocus.apply(document.activeElement);
+            }, 0);
+
+            function onMouseUp() {
+                document.removeEventListener('mouseup', onMouseUp);
+                if (labeledElement) {
+                    // wait while labeled element will be focused
+                    // then remove focus listener
+                    setTimeout(function () {
+                        labeledElement.removeEventListener('focus', onFocus);
+                        labeledElement = undefined;
+                    }, 0);
+                }
+            }
+
+            function onFocus() {
+                setMouseFocused(this);
+                removeFocusListeners();
+            }
+
+            function removeFocusListeners() {
+                for (var i = 0; i < els.length; i++) {
+                    el = els[i];
+                    el.removeEventListener('focus', onFocus);
+                }
+            }
+        });
+
+        window.addEventListener('blur', function (e) {
+            if (e.target != this)
+                return;
+
+            // save element to restore mouse-focused class when this tab will be focused again
+            if (justBlured) {
+                wasMouseFocused = justBlured;
+            }
+        }, true);
+
+        window.addEventListener('focus', function () {
+            // restore mouse-focused
+            if (wasMouseFocused) {
+                if (document.activeElement == wasMouseFocused) {
+                    setMouseFocused(wasMouseFocused);
+                }
+                wasMouseFocused = undefined;
+            }
+
+        });
+
+        function onBlur() {
+            // save element in case when element is blurred with current browser tab blur
+            // to restore mouse-focused class when this tab will be focused again
+            justBlured = this;
+            this.removeEventListener('blur', onBlur);
+            utils.removeClass(this, MOUSE_FOCUSED_CLASS);
+
+            // clear justBlured, if this tab was blurred, element should be saved in wasMouseFocused variable
+            setTimeout(function () {
+                justBlured = undefined;
+            }, 0);
+        }
+
+        function setMouseFocused(element) {
+            // if found and it's not body
+            if (element && element.tagName.toLowerCase() != 'body') {
+                // add special class, remove it after `blur`
+                utils.addClass(element, MOUSE_FOCUSED_CLASS);
+                element.addEventListener('blur', onBlur);
+            }
+        }
+    }
+
+})();
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+
+    /**
+     *
+     * @param {Element} element
+     * @param {string} className
+     */
+    addClass: function addClass(element, className) {
+        var re = new RegExp("(^|\\s)" + className + "(\\s|$)", "g");
+        if (re.test(element.className)) return;
+        element.className = (element.className + " " + className).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    },
+
+    /**
+     *
+     * @param {Element} element
+     * @param {string} className
+     */
+    removeClass: function removeClass(element, className) {
+        var re = new RegExp("(^|\\s)" + className + "(\\s|$)", "g");
+        element.className = element.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+    }
+};
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _events = __webpack_require__(1);
+
+var _events2 = _interopRequireDefault(_events);
+
+var _cgComponentUtils = __webpack_require__(0);
+
+var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+var _helpFuncs = __webpack_require__(2);
+
+var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
+
+var _const = __webpack_require__(3);
+
+var _const2 = _interopRequireDefault(_const);
+
+var _merge = __webpack_require__(4);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TABS_CLASS = _const2.default.CLASSES.TABS_CLASS;
+var TAB_CLASS = TABS_CLASS + '-tab';
+var TAB_SELECT_CLASS = TAB_CLASS + '-select';
+var PANEL_CLASS = TABS_CLASS + '-panel';
+
+/**
+ * Tab Component Class
+ */
+
+var Tab = function (_EventEmitter) {
+  _inherits(Tab, _EventEmitter);
+
+  _createClass(Tab, null, [{
+    key: 'DEFAULT_SETTINGS',
+
+
+    /**
+     * Tab's settings
+     * @property {element|string} title - tab's title
+     * @property {element|string} content
+     * @returns {Object} settings
+     * @static
+     */
+    get: function get() {
+      if (!this._DEFAULT_SETTINGS) {
+        this._DEFAULT_SETTINGS = {
+          title: 'Tab',
+          content: 'Example text'
+        };
+      }
+
+      return this._DEFAULT_SETTINGS;
+    }
+  }, {
+    key: 'EVENTS',
+    get: function get() {
+      if (!this._EVENTS) {
+        this._EVENTS = {
+          REMOVE: 'remove',
+          SELECT: 'select'
+        };
+      }
+
+      return this._EVENTS;
+    }
+  }]);
+
+  function Tab(settings) {
+    _classCallCheck(this, Tab);
+
+    // Define identifiers
+    var _this = _possibleConstructorReturn(this, (Tab.__proto__ || Object.getPrototypeOf(Tab)).call(this));
+
+    _this.id = _helpFuncs2.default.generateId();
+    _this.panelId = _helpFuncs2.default.generateId();
+
+    _this._render();
+    _this._renderTabPanel();
+    _this._applySettings(settings);
+    return _this;
+  }
+
+  _createClass(Tab, [{
+    key: 'select',
+
+
+    /**
+     * Select tab
+     */
+    value: function select() {
+      if (this.selected) {
+        return;
+      }
+
+      // Call listeners for select event
+      this.emit(this.constructor.EVENTS.SELECT);
+
+      // Set wai aria attributes
+      this._element.setAttribute('tabindex', '0');
+      this._element.setAttribute('aria-selected', 'true');
+
+      // Add selected class
+      _cgComponentUtils2.default.addClass(this._element, TAB_SELECT_CLASS);
+
+      // Show panel associated with this tab
+      this.showPanel();
+
+      this.selected = true;
+    }
+
+    /**
+     * Close tab
+     */
+
+  }, {
+    key: 'close',
+    value: function close() {
+      // Set wai aria attributes
+      this._element.setAttribute('tabindex', '-1');
+      this._element.setAttribute('aria-selected', 'false');
+
+      // Remove selected class
+      _cgComponentUtils2.default.removeClass(this._element, TAB_SELECT_CLASS);
+
+      // Hide panel associated with this tab
+      this.hidePanel();
+
+      this.selected = false;
+    }
+
+    /**
+     * Set focus to tab element
+     */
+
+  }, {
+    key: 'focus',
+    value: function focus() {
+      this._element.focus();
+    }
+
+    /**
+     * Remove tab element from DOM
+     */
+
+  }, {
+    key: 'remove',
+    value: function remove() {
+      // Emits attached events
+      this.emit(this.constructor.EVENTS.REMOVE);
+
+      var tabParent = this._element.parentNode;
+      var panelParent = this._panelElement.parentNode;
+
+      if (tabParent && panelParent) {
+        tabParent.removeChild(this._element);
+        panelParent.removeChild(this._panelElement);
+      }
+    }
+
+    /**
+     * Hide panel associated with this tab
+     */
+
+  }, {
+    key: 'hidePanel',
+    value: function hidePanel() {
+      this._panelElement.style.display = 'none';
+      this._panelElement.setAttribute('aria-hidden', 'true');
+    }
+
+    /**
+     * Show panel associated with this tab
+     */
+
+  }, {
+    key: 'showPanel',
+    value: function showPanel() {
+      this._panelElement.style.display = '';
+      this._panelElement.setAttribute('aria-hidden', 'false');
+    }
+
+    /**
+     *
+     * @param {object} settings
+     * @private
+     */
+
+  }, {
+    key: '_applySettings',
+    value: function _applySettings(settings) {
+      // Declare link to default settings
+      var DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+
+      // Extend user's settings with default settings
+      this._settings = (0, _merge2.default)({}, DEFAULT_SETTINGS, settings);
+
+      // Apply each setting using setter
+      for (var key in DEFAULT_SETTINGS) {
+        if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
+          this[key] = settings[key];
+        }
+      }
+    }
+
+    /**
+     * Update current title
+     * @private
+     */
+
+  }, {
+    key: '_applyTitle',
+    value: function _applyTitle() {
+      // Get type of title
+      var type = _typeof(this.title);
+
+      if (type === 'string') {
+        // Try to find element on the page and append that
+        // Else just inner this string into an element
+        try {
+          var child = document.querySelector(this.title);
+
+          this._element.appendChild(child);
+        } catch (e) {
+          this._element.innerHTML = this.title;
+        }
+      } else {
+        throw new Error(this.title + '. Your type - ' + type + '. title must be a String.');
+      }
+    }
+
+    /**
+     * Update current panel's content
+     * @private
+     */
+
+  }, {
+    key: '_applyContent',
+    value: function _applyContent() {
+      if (this.content instanceof HTMLElement) {
+        this._panelElement.appendChild(this.content);
+      } else if (typeof this.content === 'string') {
+        var child = void 0;
+
+        try {
+          // Try to get element
+          child = document.querySelector(this.content);
+          this._panelElement.appendChild(child);
+        } catch (e) {
+          this._panelElement.innerHTML = this.content;
+        }
+      }
+    }
+
+    /**
+     * Render mockup for tab
+     * @private
+     */
+
+  }, {
+    key: '_render',
+    value: function _render() {
+      // Create wrapper for tab
+      this._element = _cgComponentUtils2.default.createHTML('<li class=\'' + TAB_CLASS + '\'></li>');
+      this._element.addEventListener('click', this.select.bind(this));
+
+      // Add attributes for wai aria support
+      this._element.id = this.id;
+      this._element.setAttribute('role', 'tab');
+      this._element.setAttribute('aria-controls', this.panelId);
+    }
+
+    /**
+     * Render mockup for tab panel
+     * @private
+     */
+
+  }, {
+    key: '_renderTabPanel',
+    value: function _renderTabPanel() {
+      // Create wrapper for tab
+      this._panelElement = _cgComponentUtils2.default.createHTML('<div class=\'' + PANEL_CLASS + '\'></div>');
+
+      // Add attributes for wai aria support
+      this._panelElement.id = this.panelId;
+      this._panelElement.setAttribute('role', 'tabpanel');
+      this._panelElement.setAttribute('aria-labelledby', this.id);
+    }
+  }, {
+    key: 'width',
+    get: function get() {
+      return this._element.getBoundingClientRect().width;
+    }
+
+    /**
+     * Setter tab's title
+     * @param {string} value
+     */
+
+  }, {
+    key: 'title',
+    set: function set(value) {
+      this._title = value;
+      this._applyTitle();
+    }
+
+    /**
+     * Getter tab's string
+     * @returns {string} title
+     */
+    ,
+    get: function get() {
+      return this._title;
+    }
+
+    /**
+     * Setter panel's content
+     * @param {element|string} value
+     */
+
+  }, {
+    key: 'content',
+    set: function set(value) {
+      this._content = value;
+      this._applyContent();
+    }
+
+    /**
+     * Getter panel's content
+     * @returns {element|string} panel's content
+     */
+    ,
+    get: function get() {
+      return this._content;
+    }
+  }]);
+
+  return Tab;
+}(_events2.default);
+
+exports.default = Tab;
+module.exports = exports['default'];
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+if (!Element.prototype.matches) {
+  Element.prototype.matches =
+    Element.prototype.matchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector ||
+    Element.prototype.webkitMatchesSelector ||
+    function (s) {
+      var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+          i       = matches.length;
+      while (--i >= 0 && matches.item(i) !== this) {
+        // empty
+      }
+      return i > -1;
+    };
+}
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cgComponentUtils = __webpack_require__(0);
+
+var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
+
+var _helpFuncs = __webpack_require__(2);
+
+var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * If tabs don't fit in tab-panel, add arrow buttons to move tab-panel
+ */
+var Scroll = function () {
+  /**
+   * Added pseudo-scroll functionality
+   * @param {Element} element
+   */
+  function Scroll(element) {
+    _classCallCheck(this, Scroll);
+
+    this._element = element;
+    this._content = element.children[0];
+    this._parentElement = element.parentNode;
+
+    this.controls = {};
+
+    this._render();
+    this._init();
+    this._updateControls();
+    this.enable();
+  }
+
+  /**
+   * Maximum value of the scroll
+   * @returns {number} maximum
+   */
+
+
+  _createClass(Scroll, [{
+    key: '_updateControls',
+
+
+    /**
+     * Show or hide arrows
+     */
+    value: function _updateControls() {
+      this.controls.right.style.display = this.value === this.max ? 'none' : '';
+      this.controls.left.style.display = this.value === this.min ? 'none' : '';
+    }
+
+    /**
+     * Update current scroll value
+     * @param {number} [value]
+     */
+
+  }, {
+    key: 'move',
+    value: function move(value) {
+      this.value += value || this.step;
+    }
+
+    /**
+     * Synchronize element scroll value and model value
+     */
+
+  }, {
+    key: 'update',
+    value: function update() {
+      // Synchronize element scroll value and model value
+      this.value = this._element.scrollLeft;
+    }
+
+    /**
+     *
+     */
+
+  }, {
+    key: 'enable',
+    value: function enable() {
+      if (this.disabled) {
+        _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');
+
+        this._updateControls();
+      }
+    }
+
+    /**
+     * Disable scroll functionality
+     */
+
+  }, {
+    key: 'disable',
+    value: function disable() {
+      if (this.disabled) {
+        return;
+      }
+
+      _cgComponentUtils2.default.removeClass(this._parentElement, 'scrollable');
+
+      // Hide arrows
+      this.controls.right.style.display = 'none';
+      this.controls.left.style.display = 'none';
+    }
+
+    /**
+     * Set initial app state
+     * @private
+     */
+
+  }, {
+    key: '_init',
+    value: function _init() {
+      this.step = this.elementSize.width / 2;
+      this.disabled = false;
+
+      this._element.addEventListener('scroll', this.update.bind(this));
+    }
+
+    /**
+     * Render html mockup
+     * @returns {{}|*} controls
+     * @private
+     */
+
+  }, {
+    key: '_render',
+    value: function _render() {
+      var _this = this;
+
+      _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');
+
+      var leftArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');
+      var rightArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');
+
+      leftArrow.className = 'arrow left';
+      rightArrow.className = 'arrow right';
+
+      this.controls.left = leftArrow;
+      this.controls.right = rightArrow;
+
+      this._parentElement.appendChild(leftArrow);
+      this._parentElement.appendChild(rightArrow);
+
+      leftArrow.addEventListener('click', function () {
+        _this.move(-_this.step);
+      });
+      rightArrow.addEventListener('click', function () {
+        _this.move(_this.step);
+      });
+
+      return this.controls;
+    }
+  }, {
+    key: 'max',
+    get: function get() {
+      var containerWidth = this.elementSize.width;
+      var elementWidth = this.contentSize.width;
+
+      return Math.ceil(elementWidth - containerWidth);
+    }
+
+    /**
+     * Minimum value of the scroll
+     * @returns {number} minimum
+     */
+
+  }, {
+    key: 'min',
+    get: function get() {
+      return 0;
+    }
+
+    /**
+     * Setter value for scrolling element
+     * @param {number} value
+     */
+
+  }, {
+    key: 'value',
+    set: function set(value) {
+      var scroll = Math.max(value, this.min);
+
+      scroll = Math.min(scroll, this.max);
+
+      this._element.scrollLeft = scroll;
+
+      this._updateControls();
+    }
+
+    /**
+     * Getter value for scrolling element
+     * @returns {number} scroll position
+     */
+    ,
+    get: function get() {
+      return this._element.scrollLeft;
+    }
+
+    /**
+     * Set scroll step
+     * @param {Number} value
+     */
+
+  }, {
+    key: 'step',
+    set: function set(value) {
+      this._step = value;
+    }
+
+    /**
+     * @returns {Number} scroll step
+     */
+    ,
+    get: function get() {
+      return this._step;
+    }
+  }, {
+    key: 'elementSize',
+    get: function get() {
+      return _helpFuncs2.default.getClientRect(this._element);
+    }
+  }, {
+    key: 'contentSize',
+    get: function get() {
+      return _helpFuncs2.default.getClientRect(this._content);
+    }
+
+    /**
+     * @param {Boolean} disable
+     */
+
+  }, {
+    key: 'disabled',
+    set: function set(disable) {
+      this._disabled = disable;
+    }
+
+    /**
+     * @return {Boolean} disabled
+     */
+    ,
+    get: function get() {
+      return this._disabled;
+    }
+  }]);
+
+  return Scroll;
+}();
+
+module.exports = Scroll;
+
+/***/ })
+/******/ ]);
+});
