@@ -1,5 +1,3 @@
-'use strict';
-
 import './common.less';
 import 'mouse-focused';
 
@@ -33,10 +31,14 @@ const KEY_CODE = {
  * Tabs's customizing settings
  * @typedef {Object} TabsSettings
  * @property {Element|string} container - DOM Element or element id in which slider instance should be rendered.
- *                                        This property can be omitted. In this case new DOM element will be created and can be accessed via `tabsInstance.container`
+ *                                        This property can be omitted. In this case new DOM element will be created
+ *                                        and can be accessed via `tabsInstance.container`
  * @property {number} selected - selected tab
  */
 
+/**
+ * Accessible Tabs Component
+ */
 class CgTabs extends EventEmitter {
   /**
    * Default tab navigation's settings
@@ -45,7 +47,7 @@ class CgTabs extends EventEmitter {
    * @property {array}          tabs - tabs list
    * @property {string}         tabs[].title - title for tab
    * @property {element|string} tabs[].content - content for tab panel
-   * @returns {object}
+   * @returns {object} settings
    */
   static get DEFAULT_SETTINGS() {
     if (!this._DEFAULT_SETTINGS) {
@@ -60,12 +62,13 @@ class CgTabs extends EventEmitter {
         ]
       };
     }
+
     return this._DEFAULT_SETTINGS;
   }
 
   /**
    * @property {string} SELECT - emit when user select one of the tabs
-   * @returns {object}
+   * @returns {object} events
    * @static
    */
   static get EVENTS() {
@@ -74,13 +77,14 @@ class CgTabs extends EventEmitter {
         SELECT: 'select'
       };
     }
+
     return this._EVENTS;
   }
 
   /**
    * Get element of container
-   * @param container
-   * @returns {Element}
+   * @param {Element|String} container
+   * @returns {Element} fixed container
    * @private
    */
   static _fixContainer(container) {
@@ -89,7 +93,7 @@ class CgTabs extends EventEmitter {
     }
 
     if (typeof container === 'string') {
-      let element = document.querySelector(container);
+      const element = document.querySelector(container);
 
       if (element !== null) {
         return element;
@@ -99,21 +103,24 @@ class CgTabs extends EventEmitter {
 
   static _fixSetting(name, value) {
     const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
+    let result = value;
 
     switch (name) {
-      // field 'selected' should be a number
+      // Field 'selected' should be a number
       case 'selected':
-        if (isNaN(value)) {
-          value = DEFAULT_SETTINGS[name];
+        if (isNaN(result)) {
+          result = DEFAULT_SETTINGS[name];
         }
+        break;
+      default:
         break;
     }
 
-    return value;
+    return result;
   }
 
   static _fixSettings(settings) {
-    for (let name in settings) {
+    for (const name in settings) {
       if (settings.hasOwnProperty(name)) {
         settings[name] = this._fixSetting(name, settings[name]);
       }
@@ -161,44 +168,45 @@ class CgTabs extends EventEmitter {
    * @param {number} value
    */
   set selected(value) {
-    value = +value;
+    let index = +value;
 
-    if (isNaN(value)) { // must be a number
+    if (isNaN(index)) { // Must be a number
       return;
     }
 
-    // check that value is between first and last tabs
-    value = value > this.tabs.length - 1 ? 0 : value;
-    value = value < 0 ? this.tabs.length - 1 : value;
+    // Check that value is between first and last tabs
+    index = index > this.tabs.length - 1 ? 0 : index;
+    index = index < 0 ? this.tabs.length - 1 : index;
 
-    this._settings.selected = value;
-    this.selectTab(value);
+    this._settings.selected = index;
+    this.selectTab(index);
   }
 
   /**
    * Getter for selecting tab
-   * @returns {number}
+   * @returns {number} selected tab index
    */
   get selected() {
     return this._settings.selected;
   }
 
   /**
-   * add Tab element to current state
-   * @param {Object} [options]
-   * @param {Number} [position]
+   * Add Tab element to current state
+   * @param {Object} options
+   * @param {Number} position
+   * @return {Tab} tab
    */
   addTab(options, position) {
-    let tab = new Tab(options);
+    const tab = new Tab(options);
 
     if (typeof position === 'number') {
       if (position !== this.tabs.length) {
-        let reference = this.tabs[position]._element;
+        const reference = this.tabs[position]._element;
 
-        // place element to the desired position of the array
+        // Place element to the desired position of the array
         this.tabs.splice(position, 0, tab);
 
-        // increment selected index
+        // Increment selected index
         this._settings.selected++;
 
         this._tabListContent.insertBefore(tab._element, reference);
@@ -206,39 +214,41 @@ class CgTabs extends EventEmitter {
     } else {
       this._tabListContent.appendChild(tab._element);
 
-      // write and append new tab on the page
+      // Write and append new tab on the page
       this.tabs.push(tab);
     }
 
     this._panelListElement.appendChild(tab._panelElement);
 
-    // attach custom events
+    // Attach custom events
     tab.on('select', this._updateCurrentTab.bind(this, tab));
     tab.on('remove', this._updateSelectedTab.bind(this, tab));
     tab.on('remove', this._updateScrollState.bind(this));
 
-    // attach event, for switching between tabs
-    tab._element.addEventListener('keydown', e => {
-      let keyCode = e.which || e.keyCode;
+    // Attach event, for switching between tabs
+    tab._element.addEventListener('keydown', (e) => {
+      const keyCode = e.which || e.keyCode;
 
       switch (keyCode) {
-        // for previous tab
+        // For previous tab
         case KEY_CODE.ARROW.LEFT:
         case KEY_CODE.ARROW.DOWN:
           this.selectPrevTab();
           break;
-        // for next tab
+        // For next tab
         case KEY_CODE.ARROW.RIGHT:
         case KEY_CODE.ARROW.UP:
           this.selectNextTab();
           break;
-        // switch to first tab
+        // Switch to first tab
         case KEY_CODE.HOME:
           this.selectTab(0);
           break;
-        // switch to last tab
+        // Switch to last tab
         case KEY_CODE.END:
           this.selectTab(this.tabs.length - 1);
+          break;
+        default:
           break;
       }
 
@@ -271,7 +281,7 @@ class CgTabs extends EventEmitter {
    * @param {Number} index - number from 0 to the number of tabs - 1
    */
   selectTab(index) {
-    let tab = this.tabs[index];
+    const tab = this.tabs[index];
 
     if (typeof tab !== 'undefined') {
       tab.select();
@@ -292,8 +302,8 @@ class CgTabs extends EventEmitter {
       return;
     }
 
-    // get tab index from list
-    let index = this.tabs.indexOf(tab);
+    // Get tab index from list
+    const index = this.tabs.indexOf(tab);
 
     if (index > -1) {
       this.tabs.splice(index, 1);
@@ -323,18 +333,18 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _applySettings(settings) {
-    settings = this.constructor._fixSettings(settings);
+    const fixedSettings = this.constructor._fixSettings(settings);
 
     const DEFAULT_SETTINGS = this.constructor.DEFAULT_SETTINGS;
 
-    // extend user's settings with default settings
+    // Extend user's settings with default settings
     /** @type TabsSettings */
-    this._settings = merge({}, DEFAULT_SETTINGS, settings);
+    this._settings = merge({}, DEFAULT_SETTINGS, fixedSettings);
 
-    // apply each setting using setter
-    for (let key in DEFAULT_SETTINGS) {
+    // Apply each setting using setter
+    for (const key in DEFAULT_SETTINGS) {
       if (DEFAULT_SETTINGS.hasOwnProperty(key)) {
-        this[key] = settings[key];
+        this[key] = fixedSettings[key];
       }
     }
   }
@@ -344,11 +354,11 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _render() {
-    // create container for tabs component
+    // Create container for tabs component
     this._rootElement = document.createElement('div');
     this._rootElement.className = TABS_CLASS;
 
-    // draw shell for
+    // Draw shell for
     const tabListContainer = utils.createHTML(`
       <div class="${TABS_CONTAINER_CLASS}">
         <div class="${TAB_LIST_CLASS}">
@@ -389,7 +399,7 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _updateSelectedTab(tab) {
-    let index = this.tabs.indexOf(tab);
+    const index = this.tabs.indexOf(tab);
 
     if (index > -1) {
       this.tabs.splice(index, 1);
@@ -406,7 +416,7 @@ class CgTabs extends EventEmitter {
    * @private
    */
   _updateScrollState() {
-    // get tab list panel size
+    // Get tab list panel size
     const contentWidth = this._tabListContent.getBoundingClientRect().width;
     const containerWidth = this._tabListContainer.getBoundingClientRect().width;
     const diff = contentWidth - containerWidth;
@@ -416,10 +426,8 @@ class CgTabs extends EventEmitter {
         this.scroll = new Scroll(this._tabListElement);
       }
       this.scroll.enable();
-    } else {
-      if (this.scroll) {
-        this.scroll.disable();
-      }
+    } else if (this.scroll) {
+      this.scroll.disable();
     }
   }
 }

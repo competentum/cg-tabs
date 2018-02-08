@@ -1,43 +1,36 @@
-'use strict';
-
+/* eslint-disable no-magic-numbers */
 export default {
   /**
    * Generate series of characters
-   * @param {Number|String} [length] - id length
-   * @returns {string}
+   * @param {Number|String} idLength - id length
+   * @returns {string} id
    */
-  generateId: function(length){
-    length = parseInt(length, 10);
+  generateId(idLength) {
+    let length = parseInt(idLength);
+
     length = isNaN(length) ? 4 : Math.abs(length);
     length = Math.max(1, Math.min(length, 20));
 
-    let characters = [];
-    let rangeList = [
-      // for more information see ASCII table
-      // example: 48 it's "0", 65 it's "A" and etc
-      [48, 57], // from 0 to 9;
-      [65, 90], // from A to Z;
-      [97, 122] // from a to z;
+    const characters = [];
+    const rangeList = [
+      // For more information see ASCII table
+      // Example: 48 it's "0", 65 it's "A" and etc
+      [48, 57], // From 0 to 9;
+      [65, 90], // From A to Z;
+      [97, 122] // From a to z;
     ];
 
-    let characterIndex;
-    let rangeIndex;
-    let character;
-    let range;
-    let max;
-    let min;
+    for (let i = 0; i < length; i++) {
+      // Get one range from range list
+      const rangeIndex = Math.floor(Math.random() * rangeList.length);
+      const range = rangeList[rangeIndex];
 
-    for(let i = 0; i < length; i++){
-      // get one range from range list
-      rangeIndex = Math.floor(Math.random() * rangeList.length);
-      range = rangeList[rangeIndex];
+      const min = Math.max(range[0], range[1]);
+      const max = Math.min(range[0], range[1]);
 
-      min = Math.max(range[0], range[1]);
-      max = Math.min(range[0], range[1]);
-
-      // get ASCII code from selected range
-      characterIndex = Math.floor(Math.random() * (max - min) + min);
-      character = String.fromCharCode(characterIndex);
+      // Get ASCII code from selected range
+      const characterIndex = Math.floor(Math.random() * (max - min) + min);
+      const character = String.fromCharCode(characterIndex);
 
       characters.push(character);
     }
@@ -47,21 +40,19 @@ export default {
   /**
    * Get sizes of the Element
    * @param {Element} element - element whose size you need to get
-   * @param {string} [prop] - which property return
-   * @return {object|number}
-   *
+   * @param {string} prop - which property return
+   * @return {object|number} - property or client rect
    */
-  getClientRect: function(element, prop){
-    if(element instanceof HTMLElement){
-      // get sizes of the element and return needed value
-      let clientRect = element.getBoundingClientRect();
+  getClientRect(element, prop) {
+    if (element instanceof HTMLElement) {
+      // Get sizes of the element and return needed value
+      const clientRect = element.getBoundingClientRect();
 
-      if(prop && prop in clientRect){
+      if (prop && prop in clientRect) {
         return clientRect[prop];
       }
 
       return clientRect;
     }
   }
-}
-;
+};
