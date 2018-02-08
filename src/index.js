@@ -3,7 +3,6 @@ import 'mouse-focused';
 
 import Tab from './tab';
 import EventEmitter from 'events';
-import Scroll from './scroll';
 import utils from 'cg-component-utils';
 import constants from './const';
 import merge from 'merge';
@@ -223,7 +222,6 @@ class CgTabs extends EventEmitter {
     // Attach custom events
     tab.on('select', this._updateCurrentTab.bind(this, tab));
     tab.on('remove', this._updateSelectedTab.bind(this, tab));
-    tab.on('remove', this._updateScrollState.bind(this));
 
     // Attach event, for switching between tabs
     tab._element.addEventListener('keydown', (e) => {
@@ -256,8 +254,6 @@ class CgTabs extends EventEmitter {
     });
 
     tab.close();
-
-    this._updateScrollState();
 
     return tab;
   }
@@ -407,27 +403,6 @@ class CgTabs extends EventEmitter {
       if (this.selected === index) {
         this.selectNextTab();
       }
-    }
-  }
-
-  /**
-   * When numbers of the tabs more than container could contain in one line -
-   * need to add useful arrows to make the tabs scrollable.
-   * @private
-   */
-  _updateScrollState() {
-    // Get tab list panel size
-    const contentWidth = this._tabListContent.getBoundingClientRect().width;
-    const containerWidth = this._tabListContainer.getBoundingClientRect().width;
-    const diff = contentWidth - containerWidth;
-
-    if (diff > 0) {
-      if (!this.scroll) {
-        this.scroll = new Scroll(this._tabListElement);
-      }
-      this.scroll.enable();
-    } else if (this.scroll) {
-      this.scroll.disable();
     }
   }
 }
