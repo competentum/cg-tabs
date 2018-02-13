@@ -1,6 +1,6 @@
 {
   "name": "cg-tabs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Accessibility Tabs Component",
   "main": "build/cg-tabs.min.js",
   "scripts": {

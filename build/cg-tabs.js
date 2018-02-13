@@ -1,5 +1,5 @@
 /*!
- * cg-tabs v0.0.1 - Accessibility Tabs Component
+ * cg-tabs v0.0.2 - Accessibility Tabs Component
  * 
  * (c) 2015-2018 Competentum Group | http://competentum.com
  * Released under the MIT license
@@ -77,99 +77,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-__webpack_require__(14);
-
-module.exports = {
-
-  /**
-   *
-   * @param {Element} element
-   * @param {string} className
-   */
-  addClass: function addClass(element, className) {
-    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
-    if (re.test(element.className)) return;
-    element.className = (element.className + ' ' + className).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-  },
-
-  /**
-   *
-   * @param {Element} element
-   * @param {string} className
-   * @returns {boolean}
-   */
-  hasClass: function (element, className) {
-    return element.matches('.' + className);
-  },
-
-  /**
-   *
-   * @param {Element} element
-   * @param {string} className
-   */
-  removeClass: function removeClass(element, className) {
-    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
-    element.className = element.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-  },
-
-  /**
-   * Removes current node from tree.
-   * @param {Node} node
-   */
-  removeNode: function removeNode(node) {
-    if (node.parentNode)
-      node.parentNode.removeChild(node);
-  },
-
-  /**
-   *
-   * @param {string} html
-   * @returns {Node}
-   */
-  createHTML: function createHTML(html) {
-    var div = document.createElement('div');
-    div.innerHTML = html.trim();
-    return div.firstChild;
-  },
-
-  /**
-   * Adds coordinates to event object independently of event from touching or mouse. (cx, cy - client coordinates, px, py - page coordinates)
-   * @param event
-   */
-  extendEventObject: function extendEventObject(event) {
-    if (event.touches && event.touches[0]) {
-      event.cx = event.touches[0].clientX;
-      event.cy = event.touches[0].clientY;
-      event.px = event.touches[0].pageX;
-      event.py = event.touches[0].pageY;
-    }
-    else if (event.changedTouches && event.changedTouches[0]) {
-      event.cx = event.changedTouches[0].clientX;
-      event.cy = event.changedTouches[0].clientY;
-      event.px = event.changedTouches[0].pageX;
-      event.py = event.changedTouches[0].pageY;
-    }
-    else {
-      event.cx = event.clientX;
-      event.cy = event.clientY;
-      event.px = event.pageX;
-      event.py = event.pageY;
-    }
-  }
-};
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -477,78 +389,95 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-/* eslint-disable no-magic-numbers */
-exports.default = {
+__webpack_require__(13);
+
+module.exports = {
+
   /**
-   * Generate series of characters
-   * @param {Number|String} idLength - id length
-   * @returns {string} id
+   *
+   * @param {Element} element
+   * @param {string} className
    */
-  generateId: function generateId(idLength) {
-    var length = parseInt(idLength);
-
-    length = isNaN(length) ? 4 : Math.abs(length);
-    length = Math.max(1, Math.min(length, 20));
-
-    var characters = [];
-    var rangeList = [
-    // For more information see ASCII table
-    // Example: 48 it's "0", 65 it's "A" and etc
-    [48, 57], // From 0 to 9;
-    [65, 90], // From A to Z;
-    [97, 122] // From a to z;
-    ];
-
-    for (var i = 0; i < length; i++) {
-      // Get one range from range list
-      var rangeIndex = Math.floor(Math.random() * rangeList.length);
-      var range = rangeList[rangeIndex];
-
-      var min = Math.max(range[0], range[1]);
-      var max = Math.min(range[0], range[1]);
-
-      // Get ASCII code from selected range
-      var characterIndex = Math.floor(Math.random() * (max - min) + min);
-      var character = String.fromCharCode(characterIndex);
-
-      characters.push(character);
-    }
-
-    return characters.join('');
+  addClass: function addClass(element, className) {
+    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
+    if (re.test(element.className)) return;
+    element.className = (element.className + ' ' + className).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
   },
 
   /**
-   * Get sizes of the Element
-   * @param {Element} element - element whose size you need to get
-   * @param {string} prop - which property return
-   * @return {object|number} - property or client rect
+   *
+   * @param {Element} element
+   * @param {string} className
+   * @returns {boolean}
    */
-  getClientRect: function getClientRect(element, prop) {
-    if (element instanceof HTMLElement) {
-      // Get sizes of the element and return needed value
-      var clientRect = element.getBoundingClientRect();
+  hasClass: function (element, className) {
+    return element.matches('.' + className);
+  },
 
-      if (prop && prop in clientRect) {
-        return clientRect[prop];
-      }
+  /**
+   *
+   * @param {Element} element
+   * @param {string} className
+   */
+  removeClass: function removeClass(element, className) {
+    var re = new RegExp('(^|\\s)' + className + '(\\s|$)', 'g');
+    element.className = element.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+  },
 
-      return clientRect;
+  /**
+   * Removes current node from tree.
+   * @param {Node} node
+   */
+  removeNode: function removeNode(node) {
+    if (node.parentNode)
+      node.parentNode.removeChild(node);
+  },
+
+  /**
+   *
+   * @param {string} html
+   * @returns {Node}
+   */
+  createHTML: function createHTML(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html.trim();
+    return div.firstChild;
+  },
+
+  /**
+   * Adds coordinates to event object independently of event from touching or mouse. (cx, cy - client coordinates, px, py - page coordinates)
+   * @param event
+   */
+  extendEventObject: function extendEventObject(event) {
+    if (event.touches && event.touches[0]) {
+      event.cx = event.touches[0].clientX;
+      event.cy = event.touches[0].clientY;
+      event.px = event.touches[0].pageX;
+      event.py = event.touches[0].pageY;
+    }
+    else if (event.changedTouches && event.changedTouches[0]) {
+      event.cx = event.changedTouches[0].clientX;
+      event.cy = event.changedTouches[0].clientY;
+      event.px = event.changedTouches[0].pageX;
+      event.py = event.changedTouches[0].pageY;
+    }
+    else {
+      event.cx = event.clientX;
+      event.cy = event.clientY;
+      event.px = event.pageX;
+      event.py = event.pageY;
     }
   }
 };
-module.exports = exports['default'];
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -565,7 +494,7 @@ exports.default = {
 module.exports = exports['default'];
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {/*!
@@ -746,14 +675,14 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(6);
+module.exports = __webpack_require__(5);
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -761,31 +690,27 @@ module.exports = __webpack_require__(6);
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(7);
+__webpack_require__(6);
 
-__webpack_require__(11);
+__webpack_require__(10);
 
-var _tab = __webpack_require__(13);
+var _tab = __webpack_require__(12);
 
 var _tab2 = _interopRequireDefault(_tab);
 
-var _events = __webpack_require__(1);
+var _events = __webpack_require__(0);
 
 var _events2 = _interopRequireDefault(_events);
 
-var _scroll = __webpack_require__(16);
-
-var _scroll2 = _interopRequireDefault(_scroll);
-
-var _cgComponentUtils = __webpack_require__(0);
+var _cgComponentUtils = __webpack_require__(1);
 
 var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
 
-var _const = __webpack_require__(3);
+var _const = __webpack_require__(2);
 
 var _const2 = _interopRequireDefault(_const);
 
-var _merge = __webpack_require__(4);
+var _merge = __webpack_require__(3);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -993,7 +918,6 @@ var CgTabs = function (_EventEmitter) {
       // Attach custom events
       tab.on('select', this._updateCurrentTab.bind(this, tab));
       tab.on('remove', this._updateSelectedTab.bind(this, tab));
-      tab.on('remove', this._updateScrollState.bind(this));
 
       // Attach event, for switching between tabs
       tab._element.addEventListener('keydown', function (e) {
@@ -1026,8 +950,6 @@ var CgTabs = function (_EventEmitter) {
       });
 
       tab.close();
-
-      this._updateScrollState();
 
       return tab;
     }
@@ -1198,30 +1120,6 @@ var CgTabs = function (_EventEmitter) {
         }
       }
     }
-
-    /**
-     * When numbers of the tabs more than container could contain in one line -
-     * need to add useful arrows to make the tabs scrollable.
-     * @private
-     */
-
-  }, {
-    key: '_updateScrollState',
-    value: function _updateScrollState() {
-      // Get tab list panel size
-      var contentWidth = this._tabListContent.getBoundingClientRect().width;
-      var containerWidth = this._tabListContainer.getBoundingClientRect().width;
-      var diff = contentWidth - containerWidth;
-
-      if (diff > 0) {
-        if (!this.scroll) {
-          this.scroll = new _scroll2.default(this._tabListElement);
-        }
-        this.scroll.enable();
-      } else if (this.scroll) {
-        this.scroll.disable();
-      }
-    }
   }, {
     key: 'container',
     get: function get() {
@@ -1281,16 +1179,16 @@ var CgTabs = function (_EventEmitter) {
 module.exports = CgTabs;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(8);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, {});
+var update = __webpack_require__(9)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -1307,21 +1205,21 @@ if(false) {
 }
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(9)(false);
+exports = module.exports = __webpack_require__(8)(false);
 // imports
 
 
 // module
-exports.push([module.i, ".cg-tabs {\n  position: relative;\n  width: 100%;\n  height: 100%;\n  color: #29303D;\n}\n.cg-tabs .cg-tabs-tab-list-container {\n  background: white;\n  position: relative;\n  width: 100%;\n}\n.cg-tabs .cg-tabs-tab-list-container .cg-tabs-tab-list {\n  border-bottom: 2px solid white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n  white-space: nowrap;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab {\n  height: 100%;\n  position: relative;\n  display: inline-block;\n  padding: 15px 20px;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background: wheat;\n  margin-right: 2px;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.cg-tabs-tab-select {\n  background: firebrick;\n  color: white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:focus {\n  outline: none;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:not(.is-mouse-focused):focus {\n  outline: 1px dashed firebrick;\n}\n.cg-tabs .cg-tabs-panel-list-container {\n  background: #EFF0F2;\n  position: relative;\n  width: 100%;\n  overflow: auto;\n}\n.cg-tabs .cg-tabs-panel-list-container .cg-tabs-panel-list {\n  padding: 20px;\n  min-height: 100%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n", ""]);
+exports.push([module.i, ".cg-tabs {\n  position: relative;\n  width: 100%;\n  color: #29303D;\n}\n.cg-tabs .cg-tabs-tab-list-container {\n  background: white;\n  position: relative;\n  width: 100%;\n}\n.cg-tabs .cg-tabs-tab-list-container .cg-tabs-tab-list {\n  border-bottom: 2px solid white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n  white-space: nowrap;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab {\n  height: 100%;\n  position: relative;\n  display: inline-block;\n  padding: 15px 20px;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background: wheat;\n  margin-right: 2px;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.cg-tabs-tab-select {\n  background: firebrick;\n  color: white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:focus {\n  outline: none;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:not(.is-mouse-focused):focus {\n  outline: 1px dashed firebrick;\n}\n.cg-tabs .cg-tabs-panel-list-container {\n  background: #EFF0F2;\n  position: relative;\n  width: 100%;\n  overflow: auto;\n}\n.cg-tabs .cg-tabs-panel-list-container .cg-tabs-panel-list {\n  padding: 20px;\n  min-height: 100%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -1403,7 +1301,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /*
@@ -1655,13 +1553,13 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(12);
+var utils = __webpack_require__(11);
 
 (function () {
     var MOUSE_FOCUSED_CLASS = 'is-mouse-focused';
@@ -1796,7 +1694,7 @@ var utils = __webpack_require__(12);
 })();
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1827,7 +1725,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1841,23 +1739,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _events = __webpack_require__(1);
+var _events = __webpack_require__(0);
 
 var _events2 = _interopRequireDefault(_events);
 
-var _cgComponentUtils = __webpack_require__(0);
+var _cgComponentUtils = __webpack_require__(1);
 
 var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
 
-var _helpFuncs = __webpack_require__(2);
+var _helpFuncs = __webpack_require__(14);
 
 var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
 
-var _const = __webpack_require__(3);
+var _const = __webpack_require__(2);
 
 var _const2 = _interopRequireDefault(_const);
 
-var _merge = __webpack_require__(4);
+var _merge = __webpack_require__(3);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -2192,7 +2090,7 @@ exports.default = Tab;
 module.exports = exports['default'];
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2214,6 +2112,77 @@ if (!Element.prototype.matches) {
       return i > -1;
     };
 }
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* eslint-disable no-magic-numbers */
+exports.default = {
+  /**
+   * Generate series of characters
+   * @param {Number|String} idLength - id length
+   * @returns {string} id
+   */
+  generateId: function generateId(idLength) {
+    var length = parseInt(idLength);
+
+    length = isNaN(length) ? 4 : Math.abs(length);
+    length = Math.max(1, Math.min(length, 20));
+
+    var characters = [];
+    var rangeList = [
+    // For more information see ASCII table
+    // Example: 48 it's "0", 65 it's "A" and etc
+    [48, 57], // From 0 to 9;
+    [65, 90], // From A to Z;
+    [97, 122] // From a to z;
+    ];
+
+    for (var i = 0; i < length; i++) {
+      // Get one range from range list
+      var rangeIndex = Math.floor(Math.random() * rangeList.length);
+      var range = rangeList[rangeIndex];
+
+      var min = Math.max(range[0], range[1]);
+      var max = Math.min(range[0], range[1]);
+
+      // Get ASCII code from selected range
+      var characterIndex = Math.floor(Math.random() * (max - min) + min);
+      var character = String.fromCharCode(characterIndex);
+
+      characters.push(character);
+    }
+
+    return characters.join('');
+  },
+
+  /**
+   * Get sizes of the Element
+   * @param {Element} element - element whose size you need to get
+   * @param {string} prop - which property return
+   * @return {object|number} - property or client rect
+   */
+  getClientRect: function getClientRect(element, prop) {
+    if (element instanceof HTMLElement) {
+      // Get sizes of the element and return needed value
+      var clientRect = element.getBoundingClientRect();
+
+      if (prop && prop in clientRect) {
+        return clientRect[prop];
+      }
+
+      return clientRect;
+    }
+  }
+};
+module.exports = exports['default'];
 
 /***/ }),
 /* 15 */
@@ -2242,269 +2211,6 @@ module.exports = function(module) {
 	return module;
 };
 
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _cgComponentUtils = __webpack_require__(0);
-
-var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
-
-var _helpFuncs = __webpack_require__(2);
-
-var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * If tabs don't fit in tab-panel, add arrow buttons to move tab-panel
- */
-var Scroll = function () {
-  /**
-   * Added pseudo-scroll functionality
-   * @param {Element} element
-   */
-  function Scroll(element) {
-    _classCallCheck(this, Scroll);
-
-    this._element = element;
-    this._content = element.children[0];
-    this._parentElement = element.parentNode;
-
-    this.controls = {};
-
-    this._render();
-    this._init();
-    this._updateControls();
-    this.enable();
-  }
-
-  /**
-   * Maximum value of the scroll
-   * @returns {number} maximum
-   */
-
-
-  _createClass(Scroll, [{
-    key: '_updateControls',
-
-
-    /**
-     * Show or hide arrows
-     */
-    value: function _updateControls() {
-      this.controls.right.style.display = this.value === this.max ? 'none' : '';
-      this.controls.left.style.display = this.value === this.min ? 'none' : '';
-    }
-
-    /**
-     * Update current scroll value
-     * @param {number} [value]
-     */
-
-  }, {
-    key: 'move',
-    value: function move(value) {
-      this.value += value || this.step;
-    }
-
-    /**
-     * Synchronize element scroll value and model value
-     */
-
-  }, {
-    key: 'update',
-    value: function update() {
-      // Synchronize element scroll value and model value
-      this.value = this._element.scrollLeft;
-    }
-
-    /**
-     *
-     */
-
-  }, {
-    key: 'enable',
-    value: function enable() {
-      if (this.disabled) {
-        _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');
-
-        this._updateControls();
-      }
-    }
-
-    /**
-     * Disable scroll functionality
-     */
-
-  }, {
-    key: 'disable',
-    value: function disable() {
-      if (this.disabled) {
-        return;
-      }
-
-      _cgComponentUtils2.default.removeClass(this._parentElement, 'scrollable');
-
-      // Hide arrows
-      this.controls.right.style.display = 'none';
-      this.controls.left.style.display = 'none';
-    }
-
-    /**
-     * Set initial app state
-     * @private
-     */
-
-  }, {
-    key: '_init',
-    value: function _init() {
-      this.step = this.elementSize.width / 2;
-      this.disabled = false;
-
-      this._element.addEventListener('scroll', this.update.bind(this));
-    }
-
-    /**
-     * Render html mockup
-     * @returns {{}|*} controls
-     * @private
-     */
-
-  }, {
-    key: '_render',
-    value: function _render() {
-      var _this = this;
-
-      _cgComponentUtils2.default.addClass(this._parentElement, 'scrollable');
-
-      var leftArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');
-      var rightArrow = _cgComponentUtils2.default.createHTML('<div><span></span></div>');
-
-      leftArrow.className = 'arrow left';
-      rightArrow.className = 'arrow right';
-
-      this.controls.left = leftArrow;
-      this.controls.right = rightArrow;
-
-      this._parentElement.appendChild(leftArrow);
-      this._parentElement.appendChild(rightArrow);
-
-      leftArrow.addEventListener('click', function () {
-        _this.move(-_this.step);
-      });
-      rightArrow.addEventListener('click', function () {
-        _this.move(_this.step);
-      });
-
-      return this.controls;
-    }
-  }, {
-    key: 'max',
-    get: function get() {
-      var containerWidth = this.elementSize.width;
-      var elementWidth = this.contentSize.width;
-
-      return Math.ceil(elementWidth - containerWidth);
-    }
-
-    /**
-     * Minimum value of the scroll
-     * @returns {number} minimum
-     */
-
-  }, {
-    key: 'min',
-    get: function get() {
-      return 0;
-    }
-
-    /**
-     * Setter value for scrolling element
-     * @param {number} value
-     */
-
-  }, {
-    key: 'value',
-    set: function set(value) {
-      var scroll = Math.max(value, this.min);
-
-      scroll = Math.min(scroll, this.max);
-
-      this._element.scrollLeft = scroll;
-
-      this._updateControls();
-    }
-
-    /**
-     * Getter value for scrolling element
-     * @returns {number} scroll position
-     */
-    ,
-    get: function get() {
-      return this._element.scrollLeft;
-    }
-
-    /**
-     * Set scroll step
-     * @param {Number} value
-     */
-
-  }, {
-    key: 'step',
-    set: function set(value) {
-      this._step = value;
-    }
-
-    /**
-     * @returns {Number} scroll step
-     */
-    ,
-    get: function get() {
-      return this._step;
-    }
-  }, {
-    key: 'elementSize',
-    get: function get() {
-      return _helpFuncs2.default.getClientRect(this._element);
-    }
-  }, {
-    key: 'contentSize',
-    get: function get() {
-      return _helpFuncs2.default.getClientRect(this._content);
-    }
-
-    /**
-     * @param {Boolean} disable
-     */
-
-  }, {
-    key: 'disabled',
-    set: function set(disable) {
-      this._disabled = disable;
-    }
-
-    /**
-     * @return {Boolean} disabled
-     */
-    ,
-    get: function get() {
-      return this._disabled;
-    }
-  }]);
-
-  return Scroll;
-}();
-
-module.exports = Scroll;
 
 /***/ })
 /******/ ]);
