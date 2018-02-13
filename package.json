@@ -23,6 +23,11 @@
     "url": "https://github.com/competentum/cg-tabs/issues"
   },
   "homepage": "https://github.com/competentum/cg-tabs#readme",
+  "keywords": [
+    "tabs",
+    "a11y",
+    "accessibility"
+  ],
   "devDependencies": {
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",

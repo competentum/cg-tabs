@@ -1,4 +1,4 @@
-# cg-template-component
+# cg-tabs
 
 > JavaScript Accessible Tabs Component by [Competentum Group](http://competentum.com/).
   Exported as a [UMD](https://github.com/umdjs/umd) module.
@@ -22,7 +22,7 @@ npm install --save cg-tabs
 ```
 
 ## Usage
-```
+```javascript
 import CgTabs from 'cg-tabs'; // This line can be omitted if component was added via script tag
 
 const settings = {
