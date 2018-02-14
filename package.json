@@ -1,7 +1,7 @@
 {
   "name": "cg-tabs",
   "version": "0.0.2",
-  "description": "Accessibility Tabs Component",
+  "description": "Accessible Tabs Component",
   "main": "build/cg-tabs.min.js",
   "scripts": {
     "start": "node dev/webpack.server.dev.js",
