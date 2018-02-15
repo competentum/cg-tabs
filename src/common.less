@@ -1,24 +1,14 @@
 @prefix: cg-tabs;
-@text-color: #29303D;
-@bg-panel-color: #EFF0F2;
-@bg-tab-color: wheat;
-@bg-tab-color-selected: firebrick;
-@border-color: white;
-@border: 2px solid @border-color;
+@bg-tab-color-selected: #e4e4e4;
+@bg-tab-color-hover: #f7f7f7;
 
 .@{prefix} {
   position: relative;
   width: 100%;
-  color: @text-color;
 
   .@{prefix}-tab-list-container {
-    background: @border-color;
     position: relative;
     width: 100%;
-
-    .@{prefix}-tab-list {
-      border-bottom: @border;
-    }
   }
 
   ul.@{prefix}-tab-list-content {
@@ -36,26 +26,22 @@
       padding: 15px 20px;
       cursor: pointer;
       user-select: none;
-      background: @bg-tab-color;
-      margin-right: 2px;
+
+      &:hover {
+        background: @bg-tab-color-hover;
+      }
 
       &.@{prefix}-tab-select {
         background: @bg-tab-color-selected;
-        color: white;
       }
 
-      &:focus {
+      &.is-mouse-focused:focus {
         outline: none;
-      }
-
-      &:not(.is-mouse-focused):focus {
-        outline: 1px dashed @bg-tab-color-selected;
       }
     }
   }
 
   .@{prefix}-panel-list-container {
-    background: @bg-panel-color;
     position: relative;
     width: 100%;
     overflow: auto;
