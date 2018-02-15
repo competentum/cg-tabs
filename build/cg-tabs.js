@@ -1,5 +1,5 @@
 /*!
- * cg-tabs v0.0.2 - Accessibility Tabs Component
+ * cg-tabs v0.0.2 - Accessible Tabs Component
  * 
  * (c) 2015-2018 Competentum Group | http://competentum.com
  * Released under the MIT license
@@ -1213,7 +1213,7 @@ exports = module.exports = __webpack_require__(8)(false);
 
 
 // module
-exports.push([module.i, ".cg-tabs {\n  position: relative;\n  width: 100%;\n  color: #29303D;\n}\n.cg-tabs .cg-tabs-tab-list-container {\n  background: white;\n  position: relative;\n  width: 100%;\n}\n.cg-tabs .cg-tabs-tab-list-container .cg-tabs-tab-list {\n  border-bottom: 2px solid white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n  white-space: nowrap;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab {\n  height: 100%;\n  position: relative;\n  display: inline-block;\n  padding: 15px 20px;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background: wheat;\n  margin-right: 2px;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.cg-tabs-tab-select {\n  background: firebrick;\n  color: white;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:focus {\n  outline: none;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:not(.is-mouse-focused):focus {\n  outline: 1px dashed firebrick;\n}\n.cg-tabs .cg-tabs-panel-list-container {\n  background: #EFF0F2;\n  position: relative;\n  width: 100%;\n  overflow: auto;\n}\n.cg-tabs .cg-tabs-panel-list-container .cg-tabs-panel-list {\n  padding: 20px;\n  min-height: 100%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n", ""]);
+exports.push([module.i, ".cg-tabs {\n  position: relative;\n  width: 100%;\n}\n.cg-tabs .cg-tabs-tab-list-container {\n  position: relative;\n  width: 100%;\n}\n.cg-tabs ul.cg-tabs-tab-list-content {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n  white-space: nowrap;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab {\n  height: 100%;\n  position: relative;\n  display: inline-block;\n  padding: 15px 20px;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab:hover {\n  background: #f7f7f7;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.cg-tabs-tab-select {\n  background: #e4e4e4;\n}\n.cg-tabs ul.cg-tabs-tab-list-content li.cg-tabs-tab.is-mouse-focused:focus {\n  outline: none;\n}\n.cg-tabs .cg-tabs-panel-list-container {\n  position: relative;\n  width: 100%;\n  overflow: auto;\n}\n.cg-tabs .cg-tabs-panel-list-container .cg-tabs-panel-list {\n  padding: 20px;\n  min-height: 100%;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n", ""]);
 
 // exports
 
