@@ -1,5 +1,4 @@
 import './common.less';
-import 'mouse-focused';
 
 import Tab from './tab';
 import EventEmitter from 'events';

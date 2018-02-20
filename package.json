@@ -29,7 +29,7 @@
     "accessibility"
   ],
   "devDependencies": {
-    "autoprefixer": "^7.2.5",
+    "autoprefixer": "^7.2.6",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
@@ -42,7 +42,7 @@
     "cli-color": "^1.2.0",
     "css-loader": "^0.28.9",
     "eslint": "^3.19.0",
-    "jest": "^22.2.1",
+    "jest": "^22.3.0",
     "jest-cli": "^17.0.3",
     "less": "^2.7.3",
     "less-loader": "^2.2.3",
@@ -53,14 +53,13 @@
     "style-loader": "^0.13.2",
     "uppercamelcase": "^1.1.0",
     "url-loader": "^0.6.2",
-    "webpack": "^3.10.0",
+    "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.1",
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
     "cg-component-utils": "^1.0.0",
     "events": "^1.1.1",
-    "merge": "^1.2.0",
-    "mouse-focused": "^1.0.7"
+    "merge": "^1.2.0"
   }
 }
