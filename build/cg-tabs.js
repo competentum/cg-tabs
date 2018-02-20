@@ -1,5 +1,5 @@
 /*!
- * cg-tabs v0.0.2 - Accessible Tabs Component
+ * cg-tabs v0.0.4 - Accessible Tabs Component
  * 
  * (c) 2015-2018 Competentum Group | http://competentum.com
  * Released under the MIT license
@@ -395,7 +395,7 @@ function isUndefined(arg) {
 "use strict";
 
 
-__webpack_require__(13);
+__webpack_require__(11);
 
 module.exports = {
 
@@ -672,7 +672,7 @@ module.exports = exports['default'];
 	}
 
 })(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
 /* 4 */
@@ -692,9 +692,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 __webpack_require__(6);
 
-__webpack_require__(10);
-
-var _tab = __webpack_require__(12);
+var _tab = __webpack_require__(10);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -1559,178 +1557,6 @@ function updateLink(linkElement, obj) {
 "use strict";
 
 
-var utils = __webpack_require__(11);
-
-(function () {
-    var MOUSE_FOCUSED_CLASS = 'is-mouse-focused';
-
-    if (window.mouseFocusingInitialized)
-        return;
-
-    window.mouseFocusingInitialized = true;
-
-    if (document.readyState == "interactive") {
-        addListeners();
-    }
-    else {
-        document.addEventListener('DOMContentLoaded', addListeners);
-    }
-
-    function isSvgElement(element) {
-        return element.namespaceURI && element.namespaceURI.toLowerCase().indexOf('svg') !== -1;
-    }
-
-    function addListeners() {
-        var justBlured;
-        var wasMouseFocused;
-        document.body.addEventListener('mousedown', function (e) {
-            var el = e.target;
-            var labeledElement;
-
-            // collect clicked element with it's parents before body-element (except svg elements)
-            var els = [];
-            while (el && el.tagName && el.tagName.toLowerCase() != 'body') {
-                if (!isSvgElement(el)) {
-                    els.push(el);
-                    el.addEventListener('focus', onFocus);
-
-                    // if label element is clicked, bound element can be focused
-                    if (el.tagName.toLowerCase() === 'label') {
-                        // save element bound to label
-                        if (el.getAttribute('for')) {
-                            labeledElement = document.getElementById(el.getAttribute('for'));
-                        }
-                        else {
-                            labeledElement = el.querySelector('input');
-                        }
-                        if (labeledElement) {
-                            labeledElement.addEventListener('focus', onFocus);
-                            document.addEventListener('mouseup', onMouseUp);
-                        }
-                    }
-                }
-                el = el.parentNode;
-            }
-
-            // if clicked element has already focused by keyboard
-            // wait for `document.activeElement` to change
-            setTimeout(function () {
-                if (isSvgElement(document.activeElement))
-                    return;
-
-                // find focused element
-                onFocus.apply(document.activeElement);
-            }, 0);
-
-            function onMouseUp() {
-                document.removeEventListener('mouseup', onMouseUp);
-                if (labeledElement) {
-                    // wait while labeled element will be focused
-                    // then remove focus listener
-                    setTimeout(function () {
-                        labeledElement.removeEventListener('focus', onFocus);
-                        labeledElement = undefined;
-                    }, 0);
-                }
-            }
-
-            function onFocus() {
-                setMouseFocused(this);
-                removeFocusListeners();
-            }
-
-            function removeFocusListeners() {
-                for (var i = 0; i < els.length; i++) {
-                    el = els[i];
-                    el.removeEventListener('focus', onFocus);
-                }
-            }
-        });
-
-        window.addEventListener('blur', function (e) {
-            if (e.target != this)
-                return;
-
-            // save element to restore mouse-focused class when this tab will be focused again
-            if (justBlured) {
-                wasMouseFocused = justBlured;
-            }
-        }, true);
-
-        window.addEventListener('focus', function () {
-            // restore mouse-focused
-            if (wasMouseFocused) {
-                if (document.activeElement == wasMouseFocused) {
-                    setMouseFocused(wasMouseFocused);
-                }
-                wasMouseFocused = undefined;
-            }
-
-        });
-
-        function onBlur() {
-            // save element in case when element is blurred with current browser tab blur
-            // to restore mouse-focused class when this tab will be focused again
-            justBlured = this;
-            this.removeEventListener('blur', onBlur);
-            utils.removeClass(this, MOUSE_FOCUSED_CLASS);
-
-            // clear justBlured, if this tab was blurred, element should be saved in wasMouseFocused variable
-            setTimeout(function () {
-                justBlured = undefined;
-            }, 0);
-        }
-
-        function setMouseFocused(element) {
-            // if found and it's not body
-            if (element && element.tagName.toLowerCase() != 'body') {
-                // add special class, remove it after `blur`
-                utils.addClass(element, MOUSE_FOCUSED_CLASS);
-                element.addEventListener('blur', onBlur);
-            }
-        }
-    }
-
-})();
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-
-    /**
-     *
-     * @param {Element} element
-     * @param {string} className
-     */
-    addClass: function addClass(element, className) {
-        var re = new RegExp("(^|\\s)" + className + "(\\s|$)", "g");
-        if (re.test(element.className)) return;
-        element.className = (element.className + " " + className).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-    },
-
-    /**
-     *
-     * @param {Element} element
-     * @param {string} className
-     */
-    removeClass: function removeClass(element, className) {
-        var re = new RegExp("(^|\\s)" + className + "(\\s|$)", "g");
-        element.className = element.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-    }
-};
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -1747,7 +1573,7 @@ var _cgComponentUtils = __webpack_require__(1);
 
 var _cgComponentUtils2 = _interopRequireDefault(_cgComponentUtils);
 
-var _helpFuncs = __webpack_require__(14);
+var _helpFuncs = __webpack_require__(12);
 
 var _helpFuncs2 = _interopRequireDefault(_helpFuncs);
 
@@ -2090,7 +1916,7 @@ exports.default = Tab;
 module.exports = exports['default'];
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2114,7 +1940,7 @@ if (!Element.prototype.matches) {
 }
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2185,7 +2011,7 @@ exports.default = {
 module.exports = exports['default'];
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
