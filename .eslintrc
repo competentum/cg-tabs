@@ -8,6 +8,10 @@
       "impliedStrict": true
     }
   },
+  "globals": {
+    "fixture": false,
+    "test": false
+  },
   "env": {
     "node": true,
     "browser": true,

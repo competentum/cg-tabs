@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import utils from 'cg-component-utils';
-import helpFuncs from './help-funcs';
+import uniqid from 'uniqid';
 import constants from './const';
 import merge from 'merge';
 
@@ -47,8 +47,8 @@ class Tab extends EventEmitter {
     super();
 
     // Define identifiers
-    this.id = helpFuncs.generateId();
-    this.panelId = helpFuncs.generateId();
+    this.id = uniqid();
+    this.panelId = uniqid();
 
     this._render();
     this._renderTabPanel();

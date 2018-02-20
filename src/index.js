@@ -194,7 +194,7 @@ class CgTabs extends EventEmitter {
    * @param {Number} position
    * @return {Tab} tab
    */
-  addTab(options, position) {
+  addTab(options, position = null) {
     const tab = new Tab(options);
 
     if (typeof position === 'number') {
