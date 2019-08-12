@@ -1,7 +1,7 @@
 /*!
  * cg-tabs v0.0.4 - Accessible Tabs Component
  * 
- * (c) 2015-2018 Competentum Group | http://competentum.com
+ * (c) 2015-2019 Competentum Group | http://competentum.com
  * Released under the MIT license
  * https://opensource.org/licenses/mit-license.php
  */

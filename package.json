@@ -8,7 +8,9 @@
     "build": "webpack --config dev/webpack.config.prod.js",
     "lint": "eslint --fix src dev --ext .js",
     "test": "npm run build && jest && npm run e2e-test",
-    "e2e-test": "testcafe chrome ./test/e2e/** --app \"http-server ./build -p 4000 --silent\""
+    "e2e-test": "testcafe chrome ./test/e2e/** --app \"http-server ./build -p 4000 --silent\"",
+    "release": "npm run build && npm run deploy",
+    "deploy": "node dev/ftp.deploy.js"
   },
   "pre-commit": [
     "test",
@@ -57,6 +59,8 @@
     "testcafe": "^0.18.6",
     "uppercamelcase": "^1.1.0",
     "url-loader": "^0.6.2",
+    "vinyl-fs": "^3.0.3",
+    "vinyl-ftp": "^0.6.1",
     "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.1",
     "webpack-merge": "^4.1.1"
